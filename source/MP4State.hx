@@ -1,6 +1,7 @@
 package;
 
 import flixel.FlxState;
+import hxcodec.VideoHandler;
 
 /**
  * Legit Just Plays An MP4 In A State
@@ -20,7 +21,7 @@ class MP4State extends FlxState {
     override public function create() {
         super.create();
 
-        var video = new MP4Handler();
+        var video = new VideoHandler();
         video.canSkip = canSkip;
         video.finishCallback = onComplete;
         video.playVideo(Paths.video(videoName));
