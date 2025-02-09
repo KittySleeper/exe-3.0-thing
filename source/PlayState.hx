@@ -2906,70 +2906,39 @@ class PlayState extends MusicBeatState
 		char.y += char.positionArray[1];
 	}
 
-	public function startVideo(name:String):Void
+	public function startVideo(name:String)
 	{
-	#if VIDEOS_ALLOWED
-	var foundFile:Bool = false;
-	var fileName:String = #if MODS_ALLOWED Paths.modFolders('videos/' + name + '.' + Paths.VIDEO_EXT); #else ''; #end
-	#if sys
-	if (FileSystem.exists(fileName))
-	{
-		foundFile = true;
-	}
-	#end
-
-	if (!foundFile)
-	{
-		fileName = Paths.video(name);
+		#if VIDEOS_ALLOWED					 
+		inCutscene = true;	
+		var fileName:String = Paths.video(name);
 		#if sys
-		if (FileSystem.exists(fileName))
-		{
+		if(!FileSystem.exists(fileName))
 		#else
-		if (OpenFlAssets.exists(fileName))
-		{
+		if(!OpenFlAssets.exists(fileName))
 		#end
-			foundFile = true;
-		}
-		} if (foundFile)
 		{
-			inCutscene = true;
-			var bg = new FlxSprite(-FlxG.width, -FlxG.height).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
-			bg.scrollFactor.set();
-			bg.cameras = [camHUD];
-			add(bg);
-
-			(new FlxVideo(fileName)).finishCallback = function()
-			{
-				remove(bg);
-				if (endingSong)
-				{
-					endSong();
-				}
-				else
-				{
-					startCountdown();
-				}
-			}
+			FlxG.log.warn('Couldnt find video file: ' + name);
+			startAndEnd();
 			return;
 		}
-		else
-		{
-			FlxG.log.warn('Couldnt find video file: ' + fileName);
-		}
-		#end
-		if (endingSong)
-		{
-			endSong();
-		}
-		else
-		{
-			startCountdown();
-		}
-	}
 
+		var video:VideoHandler = new VideoHandler();
+		video.playVideo(fileName);
+		video.finishCallback = function()
+		{
+			startAndEnd();
+			return;
+		}
+		#else
+		FlxG.log.warn('Platform not supported!');
+		startAndEnd();
+		return;
+		#end
+	}
+	
 	function startAndEnd()
 	{
-		if (endingSong)
+		if(endingSong)
 			endSong();
 		else
 			startCountdown();
@@ -6985,7 +6954,7 @@ class PlayState extends MusicBeatState
 
 	function chromaVideo(name:String)
 	{
-		var video = new MP4Sprite(0, 0);
+		var video = new VideoSprite(0, 0);
 		video.scrollFactor.set();
 		video.cameras = [camHUD];
 		video.shader = new GreenScreenShader();
@@ -6997,7 +6966,7 @@ class PlayState extends MusicBeatState
 			video.destroy();
 		}
 		video.playVideo(Paths.video(name));
-		video.readyCallback = function()
+		video.openingCallback = function()
 		{
 			video.visible = true;
 		}
