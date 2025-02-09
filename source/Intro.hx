@@ -30,6 +30,8 @@ import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
 
+import hxcodec.VideoHandler;
+
 using StringTools;
 
 class Intro extends MusicBeatState
@@ -56,7 +58,7 @@ class Intro extends MusicBeatState
 
 			FlxG.mouse.visible = false;
 
-			var video = new MP4Handler();
+			var video = new VideoHandler();
 			video.canSkip = false;
 			video.finishCallback = function()
 			{
