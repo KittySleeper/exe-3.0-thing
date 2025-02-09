@@ -91,7 +91,7 @@ class GameOverSubstate extends MusicBeatSubstate
 				bf.playAnim('firstDeath');
 			case "too-fest":
 				bf.alpha = 0;
-				var video = new MP4Handler();
+				var video = new VideoHandler();
 				var file:String = Paths.video("SanicGameOvers/" + StringTools.replace(FileSystem.readDirectory(StringTools.replace(Paths.video("random"), "/random.mp4", "/SanicGameOvers"))[FlxG.random.int(0, FileSystem.readDirectory(StringTools.replace(Paths.video("random"), "/random.mp4", "/SanicGameOvers")).length)], ".mp4", ""));
 
 				trace("playing " + file);
