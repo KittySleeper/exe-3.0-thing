@@ -1,11 +1,11 @@
 
-name: Windows Build
+name: Mac Build
 on: workflow_dispatch
 jobs:
   build:
-    name: Windows Build
+    name: Mac Build
     permissions: write-all
-    runs-on: windows-latest
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -16,13 +16,13 @@ jobs:
       - name: Restore Previous Cache
         uses: actions/cache@v3
         with:
-          key: cache-build-windows
+          key: cache-build-macos
           path: |
             .haxelib/
-            export/release/windows/haxe/
-            export/release/windows/obj/
+            export/release/macos/haxe/
+            export/release/macos/obj/
           restore-keys: |
-            cache-build-windows
+            cache-build-macos
       - name: Installing/Updating libraries
         run: |
           haxelib setup C:/haxelib
@@ -31,12 +31,12 @@ jobs:
           haxelib list
       - name: Building the game
         run: |
-          haxelib run lime build windows
+          haxelib run lime build mac
       - name: Uploading artifact (entire build)
         uses: actions/upload-artifact@v4
         with:
-          name: windowsBuild
-          path: export/release/windows/bin
+          name: macBuild
+          path: export/release/macos/bin
       - name: Clear Previous Cache
         uses: actions/github-script@v6
         with:
@@ -46,7 +46,7 @@ jobs:
               repo: context.repo.repo,
             })
             for (const cache of caches.data.actions_caches) {
-              if (cache.key == "cache-build-windows") {
+              if (cache.key == "cache-build-macos") {
                 console.log('Clearing ' + cache.key + '...')
                 await github.rest.actions.deleteActionsCacheById({
                   owner: context.repo.owner,
@@ -59,10 +59,10 @@ jobs:
       - name: Save Current Cache
         uses: actions/cache@v3
         with:
-          key: cache-build-windows
+          key: cache-build-macos
           path: |
             .haxelib/
-            export/release/windows/haxe/
-            export/release/windows/obj/
+            export/release/macos/haxe/
+            export/release/macos/obj/
           restore-keys: |
-            cache-build-windows
+            cache-build-macos
