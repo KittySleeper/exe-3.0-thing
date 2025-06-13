@@ -29,10 +29,10 @@ jobs:
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
           haxelib install hxcpp-debug-server
           haxelib list
-      - name: Building the game
+      - name: Compile
         run: |
           haxelib run lime build windows
-      - name: Uploading artifact (entire build)
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: windowsBuild

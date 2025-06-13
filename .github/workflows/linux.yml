@@ -25,15 +25,15 @@ jobs:
             cache-build-linux
       - name: Installing/Updating libraries
         run: |
-          haxelib setup C:/haxelib
+          haxelib setup ~/haxelib
           sudo apt-get install libvlc-dev libvlccore-dev
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
           haxelib install hxcpp-debug-server
           haxelib list
-      - name: Building the game
+      - name: Compile
         run: |
           haxelib run lime build linux
-      - name: Uploading artifact (entire build)
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: linuxBuild
