@@ -26,7 +26,8 @@ jobs:
       - name: Installing/Updating libraries
         run: |
           haxelib setup ~/haxelib
-          sudo apt-get install libvlc-dev libvlccore-dev
+          sudo apt-get install libvlc-dev
+          sudo apt-get install libvlccore-dev
           haxe -cp ./setup -D analyzer-optimize -main Main --interp
           haxelib install hxcpp-debug-server
           haxelib list
