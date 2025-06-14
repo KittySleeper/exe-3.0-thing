@@ -117,6 +117,9 @@ class Alphabet extends FlxSpriteGroup
 		var xPos:Float = 0;
 		for (character in splitWords)
 		{
+			// if (character.fastCodeAt() == " ")
+			// {
+			// }
 
 			var spaceChar:Bool = (character == " " || character == "_");
 			if (spaceChar)
@@ -140,6 +143,7 @@ class Alphabet extends FlxSpriteGroup
 				}
 				consecutiveSpaces = 0;
 
+				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0, textSize);
 				var letter:AlphaCharacter = new AlphaCharacter(xPos, 0, textSize);
 
 				if (isBold)

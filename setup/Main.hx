@@ -13,7 +13,7 @@ class Main {
           	FileSystem.createDirectory(".haxelib");
 
         // brief explanation: first we parse a json/xml containing the library names, data, and such
-        var libs = new Access(Xml.parse(File.getContent("./setup/desktop-libraries.xml")).firstElement());
+        var libs = new Access(Xml.parse(File.getContent("./setup/libraries.xml")).firstElement());
   
         for (data in libs.elements) {
          switch (data.x.nodeName) {
