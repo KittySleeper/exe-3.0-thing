@@ -6,6 +6,7 @@ import openfl.filters.ShaderFilter;
 import openfl.system.System;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
+import openfl.utils.Assets;
 
 class FPSDisplay extends TextField
 {
