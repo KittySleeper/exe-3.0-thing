@@ -90,9 +90,8 @@ class Main extends Sprite
 
 		fpsVar = new FPSDisplay(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
-		if(fpsVar != null) {
+		if(fpsVar != null)
 			fpsVar.visible = ClientPrefs.showFPS;
-		}
 
 		#if html5
 		FlxG.autoPause = false;
