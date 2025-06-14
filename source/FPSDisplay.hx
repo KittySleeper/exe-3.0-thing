@@ -1,4 +1,4 @@
-package openfl.display;
+package;
 
 import flixel.FlxG;
 import openfl.display.Shader;
