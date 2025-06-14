@@ -12,7 +12,7 @@ jobs:
       - name: Haxe Setup
         uses: krdlab/setup-haxe@v1
         with:
-          haxe-version: 4.3.7
+          haxe-version: 4.3.4
       - name: Restore Previous Cache
         uses: actions/cache@v3
         with:
