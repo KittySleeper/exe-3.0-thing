@@ -6,7 +6,7 @@ class CharSongList
 
 	public static var data:Map<String, Array<String>> = [
 		"majin" => ["endless", "endless-og"],
-		"lord x" => ["cycles"],
+		"lord x" => ["cycles", "fate"],
 		"tails doll" => ["sunshine", "soulless"],
 		"requital" => ["forestall-desire", "deception"],
 		"fleetway" => ["chaos"],
