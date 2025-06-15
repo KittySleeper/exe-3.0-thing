@@ -31,7 +31,7 @@ class FPSDisplay extends TextField
 		currentFPS = 0;
 		selectable = false;
 		mouseEnabled = false;
-		defaultTextFormat = new TextFormat(Assets.getFont(Paths.font("sonic-cd-menu-font")).fontName, 12, color);
+		defaultTextFormat = new TextFormat(Assets.getFont("assets/fonts/sonic-cd-menu-font.vcr").fontName, 12, color);
 		text = "FPS: ";
 
 		cacheCount = 0;
