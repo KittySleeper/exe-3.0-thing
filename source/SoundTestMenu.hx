@@ -49,7 +49,7 @@ class SoundTestMenu extends MusicBeatState
 
 	var peakSongs:Map<String, Array<String>> = [
 		"12 25" => ["endless"],
-		"7 7" => ["cycles"],
+		"7 7" => ["cycles", "fate"],
 		"8 21" => ["chaos"],
 		"4 20" => ["too-fest"],
 		"6 20" => ["substantial", "digitalized"],
