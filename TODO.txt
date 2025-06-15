@@ -4,3 +4,5 @@ Fix Cycles, Fate, Chaos, Sunshine
 Fix Freeplay having ??? everywhere (probably not a bug but i'm not sure)
 Add Anim & Lyrics to Too Slow & Too Slow Encore
 Switch to hxvlc and use newer libraries
+Add Support for Linux & Mac
+Clean-up code and add some optimization (code & images) 
