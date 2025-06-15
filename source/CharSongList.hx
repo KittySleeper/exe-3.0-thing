@@ -52,7 +52,7 @@ class CharSongList
 
 	public static var songToFreeplayChar:Map<String, String> = [
 		"endless" => "majin",
-		"choas" => "fleetway",
+		"chaos" => "fleetway",
 		"fatality" => "fatalerror",
 		"b4cksl4sh" => "sl4sh",
 		"burning" => "sonic has passed",
