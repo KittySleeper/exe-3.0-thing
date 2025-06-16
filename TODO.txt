@@ -2,6 +2,7 @@ Fix Options having Null Object Reference
 Fix Static Notes
 Fix Cycles, Fate, Chaos, Sunshine
 Fix Freeplay having ??? everywhere (probably not a bug but i'm not sure)
+Fix Story Mode Songs playing Encore Variants (Happens randomly, not sure why)
 Add Anim & Lyrics to Too Slow & Too Slow Encore
 Switch to hxvlc and use newer libraries
 Add Support for Linux & Mac
