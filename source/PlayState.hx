@@ -80,6 +80,30 @@ import hxvlc.flixel.FlxVideo as MP4Handler;
 
 using StringTools;
 
+@:cppFileCode('
+    #include <Windows.h>
+    #include <windowsx.h>
+
+    static WNDPROC originalWndProc = nullptr;
+
+    static LRESULT CALLBACK CustomWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+        if (msg == WM_SYSKEYDOWN) {
+            if (wParam == VK_RETURN && (lParam & (1 << 29))) { // Проверка Alt+Enter
+                return 0; // Полностью блокируем
+            }
+        }
+        return CallWindowProc(originalWndProc, hwnd, msg, wParam, lParam);
+    }
+
+    void BlockAltEnter() {
+        HWND hwnd = ::GetActiveWindow();
+        if (hwnd) {
+            originalWndProc = (WNDPROC)GetWindowLongPtr(hwnd, GWLP_WNDPROC);
+            SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)CustomWndProc);
+        }
+    }
+')
+
 class PlayState extends MusicBeatState
 {
 	public static var STRUM_X = 42;
@@ -848,9 +872,6 @@ class PlayState extends MusicBeatState
 			FlxG.resizeGame(960, 720);
 			FlxG.resizeWindow(960, 720);
 			Lib.application.window.resize(960, 720);
-            Lib.application.window.width = 960;
-            Lib.application.window.height = 720;
-			final startFullscreen = false;
 			FlxG.fullscreen = false;
 		}
 
@@ -2446,6 +2467,17 @@ class PlayState extends MusicBeatState
 				resyncVocals();
 			}
 
+			if (curShader != null)
+			{
+				camGame.filters = [curShader];
+				camHUD.filters = [curShader];
+			}
+			else
+			{
+				camGame.filters = [];
+				camHUD.filters = [];
+			}
+
 			if (startTimer != null && !startTimer.finished)
 				startTimer.active = true;
 			if (finishTimer != null && !finishTimer.finished)
@@ -2588,6 +2620,8 @@ class PlayState extends MusicBeatState
 				}
 
 		}
+
+		if (isFixedAspectRatio) FlxG.fullscreen = false;
 
 		wireVignette.alpha = FlxMath.lerp(wireVignette.alpha, hexes / 6, elapsed / (1 / 60) * 0.2);
 		if (hexes > 0)
@@ -2768,8 +2802,55 @@ class PlayState extends MusicBeatState
 					var secondsTotal:Int = Math.floor(songCalc / 1000);
 					if(secondsTotal < 0) secondsTotal = 0;
 
-					if(ClientPrefs.timeBarType != 'Song Name')
+					
+
+					if (SONG.song.toLowerCase() == 'endless' && curStep >= 898)
+					{
+						songPercent = 0;
+						timeTxt.text = 'Infinity';
+					}
+					else if(ClientPrefs.timeBarType != 'Song Name')
 						timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
+					else
+						timeTxt.text = SONG.song;
+
+					var curMS:Float = Math.floor(curTime);
+					var curSex:Int = Math.floor(curMS / 1000);
+					if (curSex < 0)
+						curSex = 0;
+
+					var curMins = Math.floor(curSex / 60);
+					curMS %= 1000;
+					curSex %= 60;
+
+					minNumber.number = curMins;
+
+					var sepSex = Std.string(curSex).split("");
+					if (curSex < 10)
+					{
+						secondNumberA.number = 0;
+						secondNumberB.number = curSex;
+					}
+					else
+					{
+						secondNumberA.number = Std.parseInt(sepSex[0]);
+						secondNumberB.number = Std.parseInt(sepSex[1]);
+					}
+					if (millisecondNumberA != null && millisecondNumberB != null)
+					{
+						curMS = Math.round(curMS / 10);
+						if (curMS < 10)
+						{
+							millisecondNumberA.number = 0;
+							millisecondNumberB.number = Math.floor(curMS);
+						}
+						else
+						{
+							var sepMSex = Std.string(curMS).split("");
+							millisecondNumberA.number = Std.parseInt(sepMSex[0]);
+							millisecondNumberB.number = Std.parseInt(sepMSex[1]);
+						}
+					}
 				}
 			}
 
@@ -2988,6 +3069,24 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music?.pause();
 		vocals?.pause();
 		opponentVocals?.pause();
+
+		var colorSwap:ColorSwap = new ColorSwap();
+		colorSwap.hue = -1;
+		colorSwap.brightness = -0.5;
+		colorSwap.saturation = -1;
+
+		if (curShader != null && health > 0)
+		{
+			camGame.filters = [curShader, new ShaderFilter(colorSwap.shader)];
+			camHUD.filters = [curShader, new ShaderFilter(colorSwap.shader)];
+			//camOther.filters = [curShader, new ShaderFilter(colorSwap.shader)];
+		}
+		else if (curShader == null && health > 0)
+		{
+			camGame.filters = [new ShaderFilter(colorSwap.shader)];
+			camHUD.filters = [new ShaderFilter(colorSwap.shader)];
+			//camOther.filters = [new ShaderFilter(colorSwap.shader)];
+		}
 
 		openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 		//}
@@ -3766,6 +3865,7 @@ class PlayState extends MusicBeatState
 			case "shit": // shit
 				drainMisses++;
 				drainMisses -= 0.0025;
+				updateSonicMisses();
 			case "bad": // bad
 				drainMisses -= 1/75;
 			case "good": // good
@@ -3776,6 +3876,7 @@ class PlayState extends MusicBeatState
 
 		if(!practiceMode && !cpuControlled) {
 			songScore += score;
+			updateSonicScore();
 			if(!note.ratingDisabled)
 			{
 				songHits++;
@@ -4254,7 +4355,11 @@ class PlayState extends MusicBeatState
 			}
 			combo = 0;
 
-			if(!practiceMode) songScore -= 10;
+			if(!practiceMode) { 
+				songScore -= 10;
+				updateSonicScore();
+			}
+
 			if(!endingSong) {
 				songMisses++;
 				if (fucklesMode)
@@ -4281,16 +4386,6 @@ class PlayState extends MusicBeatState
 			combo = 0;
 
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
-			// FlxG.sound.play(Paths.sound('missnote1'), 1, false);
-			// FlxG.log.add('played imss note');
-
-			/*boyfriend.stunned = true;
-
-			// get stunned for 1/60 of a second, makes you able to
-			new FlxTimer().start(1 / 60, function(tmr:FlxTimer)
-			{
-				boyfriend.stunned = false;
-			});*/
 
 			if (cNum > 0)
 			{
@@ -4537,6 +4632,8 @@ class PlayState extends MusicBeatState
 
 		if (isFixedAspectRatio)
 		{
+			isFixedAspectRatio = false;
+
 			Lib.application.window.resizable = true;
 			
 			FlxG.scaleMode = originalScaleMode;
@@ -4544,11 +4641,6 @@ class PlayState extends MusicBeatState
 			FlxG.scaleMode.onMeasure(FlxG.stage.stageWidth, FlxG.stage.stageHeight);
 			FlxG.resizeGame(originalWidth, originalHeight);
 			Lib.application.window.resize(originalWidth, originalHeight);
-			FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, (e) ->
-			{
-				if (e.keyCode == FlxKey.F11 || e.keyCode == FlxKey.ENTER && e.altKey)
-					FlxG.fullscreen = !FlxG.fullscreen;
-			}, false, 100);
 			FlxG.fullscreen = wasFullscreen;
 		}
 

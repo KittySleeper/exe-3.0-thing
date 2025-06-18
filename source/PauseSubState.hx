@@ -30,7 +30,7 @@ class PauseSubState extends MusicBeatSubstate
 
     var pauseMusic:FlxSound;
 
-    var selectionHighlight:FlxSprite;
+    var selectionHighlights:FlxTypedGroup<FlxSprite>;
     var bottomPanel:FlxSprite;
     var topPanel:FlxSprite;
     var timeBar:FlxBar;
@@ -92,6 +92,7 @@ class PauseSubState extends MusicBeatSubstate
     function createTopPanel()
     {
         topPanel = new FlxSprite(-1000, 0).loadGraphic(Paths.image("pauseStuff/pauseTop"));
+        topPanel.antialiasing = ClientPrefs.globalAntialiasing;
         add(topPanel);
         FlxTween.tween(topPanel, {x: 0}, 0.2, {ease: FlxEase.quadOut});
     }
@@ -100,6 +101,7 @@ class PauseSubState extends MusicBeatSubstate
     {
         var panelX = PlayState.isFixedAspectRatio ? 589 - 230 : 589;
         bottomPanel = new FlxSprite(1280, 33).loadGraphic(Paths.image('pauseStuff/bottomPanel'));
+        bottomPanel.antialiasing = ClientPrefs.globalAntialiasing;
         add(bottomPanel);
         FlxTween.tween(bottomPanel, {x: panelX}, 0.2, {ease: FlxEase.quadOut});
     }
@@ -141,34 +143,44 @@ class PauseSubState extends MusicBeatSubstate
 
     function createSelectionHighlight()
     {
-        selectionHighlight = new FlxSprite().loadGraphic(Paths.image('pauseStuff/graybut'));
-        selectionHighlight.x = FlxG.width - MENU_START_X + MENU_ANIM_OFFSET;
-        selectionHighlight.y = FlxG.height / 2 + MENU_START_Y;
-        add(selectionHighlight);
-        FlxTween.tween(selectionHighlight, {x: selectionHighlight.x - MENU_ANIM_OFFSET}, 0.2, {ease: FlxEase.quadOut});
+        selectionHighlights = new FlxTypedGroup<FlxSprite>();
+        add(selectionHighlights);
+        
+        for (i in 0...menuItems.length) {
+            var highlight = new FlxSprite().loadGraphic(Paths.image('pauseStuff/graybut'));
+            highlight.antialiasing = ClientPrefs.globalAntialiasing;
+            highlight.x = FlxG.width - MENU_START_X + 25;
+            highlight.y = FlxG.height / 2 + MENU_START_Y + MENU_SPACING_Y * i;
+            highlight.ID = i;
+            selectionHighlights.add(highlight);
+        }
     }
 
     function createMenuItem(index:Int)
     {
-        var button = new FlxSprite(FlxG.width + MENU_START_X + 80 * index, 
-                                  FlxG.height / 2 + MENU_START_Y + MENU_SPACING_Y * index);
+        var text = new FlxSprite();
+        text.loadGraphic(Paths.image('pauseStuff/${menuItems[index].replace(" ", "")}'));
+        text.x = FlxG.width - MENU_START_X + (index + 1) * MENU_ANIM_OFFSET;
+        text.y = FlxG.height / 2 + MENU_START_Y + MENU_SPACING_Y * index;
+        text.ID = index;
+
+        var button = new FlxSprite();
         button.loadGraphic(Paths.image("pauseStuff/blackbut"));
-        button.x += (index + 1) * MENU_ANIM_OFFSET;
+        button.x = text.x;
+        button.antialiasing = ClientPrefs.globalAntialiasing;
+        button.y = text.y + text.height + 10; // Position button below text with 10px spacing
         button.ID = index;
         menuButtons.add(button);
-        
-        FlxTween.tween(button, {x: button.x - MENU_ANIM_OFFSET * (index + 1)}, 0.2, {ease: FlxEase.quadOut});
-
-        var text = new FlxSprite(button.x + 25, button.y + 25);
-        text.loadGraphic(Paths.image('pauseStuff/${menuItems[index].replace(" ", "")}'));
-        text.ID = index;
-        text.x += (index + 1) * MENU_ANIM_OFFSET;
-        text.y = FlxG.height / 2 + MENU_START_Y + MENU_SPACING_Y * index + 5;
         menuTexts.add(text);
         
         FlxTween.tween(text, {
-            x: FlxG.width - MENU_START_X - 80 * index + 25
-        }, 0.2, {ease: FlxEase.quadOut});
+            x: FlxG.width - MENU_START_X - 80 * index
+        }, 0.2, {
+            ease: FlxEase.quadOut,
+            onUpdate: function(_) {
+                button.x = text.x;
+            }
+        });
     }
 
     function createTimeBar()
@@ -196,7 +208,7 @@ class PauseSubState extends MusicBeatSubstate
 
         timeBarBG.sprTracker = timeBar;
 
-        iconP1 = new HealthIcon(PlayState.instance.boyfriend.curCharacter, false);
+        iconP1 = new HealthIcon(PlayState.instance.boyfriend.healthIcon, false);
         iconP1.x = -1000;
         iconP1.angle = 100;
         iconP1.y = timeBar.y - (iconP1.height / 2);
@@ -205,7 +217,6 @@ class PauseSubState extends MusicBeatSubstate
 
 		iconP2 = new HealthIcon('face', false);
         iconP2.y = timeBar.y - 75;
-        //add(iconP2);
 
         var percent = 100 - timeBar.percent;
 		FlxTween.tween(iconP1, {
@@ -337,25 +348,14 @@ class PauseSubState extends MusicBeatSubstate
 
     function animateHighlight()
     {
-        var selectedButton = menuButtons.members[curSelected];
-        if (selectedButton == null) return;
-        
-        FlxTween.cancelTweensOf(selectionHighlight);
-        
-        selectionHighlight.x = selectedButton.x;
-        selectionHighlight.y = selectedButton.y;
-        
-        FlxTween.tween(selectionHighlight, {y: selectionHighlight.y - 20}, 0.2, {
-            ease: FlxEase.quadOut,
-            onComplete: function(_) {
-                FlxTween.tween(selectionHighlight, {y: selectionHighlight.y + 5}, 1, {
-                    ease: FlxEase.quadInOut, 
-                    type: FlxTween.PINGPONG
-                });
-            }
-        });
+        for (highlight in selectionHighlights) {
+            var button = menuButtons.members[highlight.ID];
+            if (button == null) continue;
+            
+            FlxTween.cancelTweensOf(highlight);
+            highlight.x = button.x;
+        }
     }
-
     function selectMenuItem()
     {
         var selected = menuItems[curSelected];
@@ -377,7 +377,9 @@ class PauseSubState extends MusicBeatSubstate
     {
         isClosing = true;
         canInteract = false;
-        FlxG.sound.play(Paths.sound("unpause"));
+        for (highlight in selectionHighlights) {
+            FlxTween.tween(highlight, {x: highlight.x + MENU_ANIM_OFFSET * (highlight.ID + 1)}, 0.2, {ease: FlxEase.quadOut});
+        }
 
         for (button in menuButtons) {
             FlxTween.tween(button, {x: button.x + MENU_ANIM_OFFSET * (button.ID + 1)}, 0.2, {ease: FlxEase.quadOut});
@@ -386,8 +388,6 @@ class PauseSubState extends MusicBeatSubstate
         for (text in menuTexts) {
             FlxTween.tween(text, {x: text.x + MENU_ANIM_OFFSET * (text.ID + 1)}, 0.2, {ease: FlxEase.quadOut});
         }
-        
-        FlxTween.tween(selectionHighlight, {x: selectionHighlight.x + MENU_ANIM_OFFSET * (curSelected + 1)}, 0.2, {ease: FlxEase.quadOut});
 
         FlxTween.tween(topPanel, {x: -1000}, 0.2, {ease: FlxEase.quadOut});
         FlxTween.tween(bottomPanel, {x: 1280}, 0.2, {
@@ -401,7 +401,7 @@ class PauseSubState extends MusicBeatSubstate
             x: -1000,
             angle: 100
         }, 0.8, {ease: FlxEase.circOut});
-        FlxTween.tween(timeBar, {alpha: 0}, 0.5, {ease: FlxEase.circOut});
+        FlxTween.tween(timeBar, {alpha: 0}, 0.3, {ease: FlxEase.circOut});
     }
 
     public static function restartSong()
