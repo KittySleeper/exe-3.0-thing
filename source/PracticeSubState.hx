@@ -10,7 +10,7 @@ import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -63,13 +63,13 @@ class PracticeSubState extends MusicBeatSubstate
 
 	private var curSong:String = "";
 
-	public function new(x:Float, y:Float)
+	public function new()
 	{
 		super();
 		menuItems = menuItemsOG;
 
-		for (i in 0...CoolUtil.difficultyStuff.length) {
-			var diff:String = '' + CoolUtil.difficultyStuff[i][0];
+		for (i in 0...CoolUtil.difficulties.length) {
+			var diff:String = '' + CoolUtil.difficulties[i];
 			difficultyChoices.push(diff);
 		}
 		difficultyChoices.push('BACK');
@@ -156,7 +156,7 @@ class PracticeSubState extends MusicBeatSubstate
 						MusicBeatState.resetState();
 						FlxG.sound.music.volume = 0;
 						PlayState.changedDifficulty = true;
-						PlayState.cpuControlled = false;
+						PlayState.instance.cpuControlled = false;
 						return;
 					}
 				}

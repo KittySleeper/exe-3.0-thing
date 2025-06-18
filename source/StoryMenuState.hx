@@ -16,7 +16,6 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import lime.net.curl.CURLCode;
 import WeekData;
 
 using StringTools;
@@ -63,7 +62,7 @@ class StoryMenuState extends MusicBeatState
 
 	var oneclickpls:Bool = true;
 
-	var bfIDLELAWL:StoryModeMenuBFidle;
+	var bfIDLELAWL:Boyfriend;
 
 	var redBOX:FlxSprite;
 
@@ -103,7 +102,7 @@ class StoryMenuState extends MusicBeatState
 		greyBOX.updateHitbox();
 		add(greyBOX);
 
-		bfIDLELAWL = new StoryModeMenuBFidle(0, 0);
+		bfIDLELAWL = new Boyfriend(0, 0);
 		bfIDLELAWL.scale.x = .4;
 		bfIDLELAWL.scale.y = .4;
 		bfIDLELAWL.screenCenter();

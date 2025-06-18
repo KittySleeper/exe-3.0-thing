@@ -16,7 +16,8 @@ class SkinsMenuState extends MusicBeatState {
     var characterRender:FlxSprite;
 
     override public function create() {
-        super.create();
+        Paths.clearStoredMemory();
+		Paths.clearUnusedMemory();
 
         var skinsHttpData = new Http("https://raw.githubusercontent.com/KittySleeper/exe-3.0-thing/refs/heads/main/DlcContent/skins/SkinsData");
         skinsHttpData.onError = function(e) {trace("Skins Database Failed To Load! " + e);}
@@ -41,6 +42,8 @@ class SkinsMenuState extends MusicBeatState {
         add(characterName);
 
         changeSelection();
+
+        super.create();
     }
 
     override public function update(elapsed:Float) {

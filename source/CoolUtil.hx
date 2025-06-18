@@ -1,65 +1,83 @@
 package;
 
 import flixel.FlxG;
-import openfl.utils.Assets;
-import lime.utils.Assets as LimeAssets;
-import lime.utils.AssetLibrary;
-import lime.utils.AssetManifest;
+import flixel.sound.FlxSound;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
-#else
-import openfl.utils.Assets;
 #end
-import flixel.math.FlxPoint;
+#if windows
+import winapi.WindowsAPI;
+#end
 
 using StringTools;
 
 class CoolUtil
 {
-	// [Difficulty name, Chart file suffix]
-	public static var difficultyStuff:Array<Dynamic> = [
-		['Easy', '-easy'],
-		['Normal', ''],
-		['Hard', '-hard'],
-		["Encore", "-encore"]
+	public static var defaultDifficulties:Array<String> = [
+		'Easy',
+		'Normal',
+		'Hard'
 	];
-	public static inline function GetPlayer(note:Note) // schmovin
-	{
-		return note.mustPress ? 1 : 0;
+	public static var defaultDifficulty:String = 'Normal'; //The chart that has no suffix and starting difficulty on Freeplay/Story Mode
+
+	public static var difficulties:Array<String> = [];
+
+	inline public static function quantize(f:Float, snap:Float){
+		// changed so this actually works lol
+		var m:Float = Math.fround(f * snap);
+		trace(snap);
+		return (m / snap);
 	}
 
-	public static inline function GetTotalColumn(note:Note)
+	inline public static function scale(x:Float, l1:Float, h1:Float, l2:Float, h2:Float):Float
+		return ((x - l1) * (h2 - l2) / (h1 - l1) + l2);
+
+	inline public static function clamp(n:Float, l:Float, h:Float)
 	{
-		return note.noteData + GetPlayer(note) * 4;
+		if (n > h)
+			n = h;
+		if (n < l)
+			n = l;
+
+		return n;
+	}
+
+	public static function rotate(x:Float, y:Float, angle:Float, ?point:FlxPoint):FlxPoint
+	{
+		var p = point == null ? FlxPoint.weak() : point;
+		p.set((x * Math.cos(angle)) - (y * Math.sin(angle)), (x * Math.sin(angle)) + (y * Math.cos(angle)));
+		return p;
+	}
+
+	inline public static function boundTo(value:Float, min:Float, max:Float):Float 
+	{
+		return Math.max(min, Math.min(max, value));
+	}
+
+	inline public static function quantizeAlpha(f:Float, interval:Float){
+		return Std.int((f+interval/2)/interval)*interval;
+	}
+	
+	public static function getDifficultyFilePath(num:Null<Int> = null)
+	{
+		if(num == null) num = PlayState.storyDifficulty;
+
+		var fileSuffix:String = difficulties[num];
+		if(fileSuffix != defaultDifficulty)
+		{
+			fileSuffix = '-' + fileSuffix;
+		}
+		else
+		{
+			fileSuffix = '';
+		}
+		return Paths.formatToSongPath(fileSuffix);
 	}
 
 	public static function difficultyString():String
 	{
-		return difficultyStuff[PlayState.storyDifficulty][0].toUpperCase();
-	}
-
-	public static function rotate(x:Float, y:Float, angle:Float, ?point:FlxPoint):FlxPoint{
-		var p = point==null?FlxPoint.get():point;
-		p.set(
-			(x*Math.cos(angle))-(y*Math.sin(angle)),
-			(x*Math.sin(angle))+(y*Math.cos(angle))
-		);
-		return p;
-	}
-
-	inline public static function scale(x:Float,l1:Float,h1:Float,l2:Float,h2:Float):Float
-		return ((x - l1) * (h2 - l2) / (h1 - l1) + l2);
-
-	public static function boundTo(value:Float, min:Float, max:Float):Float {
-		var newValue:Float = value;
-		if(newValue < min) newValue = min;
-		else if(newValue > max) newValue = max;
-		return newValue;
-	}
-
-	inline public static function quantize(f:Float, interval:Float){
-		return Std.int((f+interval/2)/interval)*interval;
+		return difficulties[PlayState.storyDifficulty].toUpperCase();
 	}
 
 	public static function coolTextFile(path:String):Array<String>
@@ -78,7 +96,18 @@ class CoolUtil
 
 		return daList;
 	}
+	public static function listFromString(string:String):Array<String>
+	{
+		var daList:Array<String> = [];
+		daList = string.trim().split('\n');
 
+		for (i in 0...daList.length)
+		{
+			daList[i] = daList[i].trim();
+		}
+
+		return daList;
+	}
 	public static function dominantColor(sprite:flixel.FlxSprite):Int{
 		var countByColor:Map<Int, Int> = [];
 		for(col in 0...sprite.frameWidth){
@@ -117,9 +146,15 @@ class CoolUtil
 
 	//uhhhh does this even work at all? i'm starting to doubt
 	public static function precacheSound(sound:String, ?library:String = null):Void {
-		if(!Assets.cache.hasSound(Paths.sound(sound, library))) {
-			FlxG.sound.cache(Paths.sound(sound, library));
-		}
+		Paths.sound(sound, library);
+	}
+
+	public static function precacheMusic(sound:String, ?library:String = null):Void {
+		Paths.music(sound, library);
+	}
+
+	public static function hasVersion(vers:String) {
+		return lime.system.System.platformLabel.toLowerCase().indexOf(vers.toLowerCase()) != -1;
 	}
 
 	public static function browserLoad(site:String) {
@@ -177,4 +212,24 @@ class CoolUtil
             throw 'No contents found in "${dstDir}"';
         }
     }
+
+	public static function setDarkMode(title:String, enable:Bool) {
+		#if windows
+		if(title == null) title = lime.app.Application.current.window.title;
+		lime.Native.setDarkMode(title, enable);
+		#end
+	}
+
+	public static function showPopUp(message:String, title:String):Void
+	{
+		#if android
+		AndroidTools.showAlertDialog(title, message, {name: "OK", func: null}, null);
+		#elseif linux
+		Sys.command("zenity", ["--info", "--title=" + title, "--text=" + message]);
+		#elseif windows
+		WindowsAPI.showMessageBox(message, title);
+		#else
+		lime.app.Application.current.window.alert(message, title);
+		#end
+	}
 }

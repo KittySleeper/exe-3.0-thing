@@ -25,6 +25,13 @@ class WarningState extends MusicBeatState
 
         PlayerSettings.init();
 
+        FlxG.save.bind('exenew', 'kittysleeper');
+
+        if (!FlxG.save.data.firstBoot) {
+            FlxG.switchState(new Intro());
+            return;
+        }
+
 		warningText = new FlxText(0, -1500, FlxG.width, "", 15);
 		warningText.font = Paths.font("sonic-cd-menu-font.ttf");
 		warningText.applyMarkup("<R>WARNING<R>\n\nThis mod is not for children or those who are easily disturbed.\nPlayer discretion is advized.\n\nThis mod contains flashing lights and imagery that may cause discomfort and or seizures for those with photosensitive epilepsy.\n\n<R>DO YOU WISH TO PROCEED?<R>",
@@ -60,7 +67,7 @@ class WarningState extends MusicBeatState
     function accept() {
         trace("accepted");
 
-        if (warningText.text.contains("children")) {//CHILDREN?!?!
+        if (warningText.text.contains("children")) { //CHILDREN?!?!
             trace("hi");
             
             if (menuObjects[curSelected].text == "yes") {
@@ -85,7 +92,7 @@ class WarningState extends MusicBeatState
             if (menuObjects[curSelected].text == "yes") {
                 FlxG.save.data.firstBoot = false;
                 FlxG.save.flush();
-        }
+            }
 
             FlxG.switchState(new Intro());
         }

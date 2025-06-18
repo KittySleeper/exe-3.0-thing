@@ -11,7 +11,7 @@ import flixel.FlxG;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.4.2'; //This is also used for Discord RPC
+	public static var psychEngineVersion:String = '0.6.3'; //This is also used for Discord RPC
 	
 	var menuItems:Array<Dynamic> = [
 		{
@@ -46,7 +46,7 @@ class MainMenuState extends MusicBeatState
 			name: "options",
 			onPress: function()
 			{
-				FlxG.switchState(new OptionsState());
+				LoadingState.loadAndSwitchState(new options.OptionsState());
 			}
 		},
 		{
@@ -64,7 +64,8 @@ class MainMenuState extends MusicBeatState
 
 	override public function create()
 	{
-		super.create();
+		Paths.clearStoredMemory();
+		Paths.clearUnusedMemory();
 
 		FlxG.sound.playMusic(Paths.music('storymodemenumusic'));
 
@@ -92,6 +93,8 @@ class MainMenuState extends MusicBeatState
 		}
 
 		changeSelection();
+
+		super.create();
 	}
 
 	override public function update(elapsed:Float)

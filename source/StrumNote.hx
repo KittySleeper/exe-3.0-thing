@@ -3,7 +3,6 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
-import flixel.math.FlxPoint;
 
 using StringTools;
 
@@ -11,48 +10,57 @@ class StrumNote extends FlxSprite
 {
 	private var colorSwap:ColorSwap;
 	public var resetAnim:Float = 0;
-	public var noteData:Int = 0;
-	public static var isMajinNote:Bool;
-	public var z:Float = 0; // for modchart system
-	public var zIndex:Float = 0;
-	public var scaleDefault:FlxPoint;
-
+	private var noteData:Int = 0;
+	public var direction:Float = 90;//plan on doing scroll directions soon -bb
+	public var downScroll:Bool = false;//plan on doing scroll directions soon -bb
+	public var sustainReduce:Bool = true;
+	
 	private var player:Int;
+	
+	public var texture(default, set):String = null;
+	private function set_texture(value:String):String {
+		if(texture != value) {
+			texture = value;
+			reloadNote();
+		}
+		return value;
+	}
 
-	public function getZIndex(){
-    var animZOffset:Float = 0;
-    if(animation.curAnim!=null && animation.curAnim.name=='confirm')animZOffset+=1;
-    return z + animZOffset - player;
-  }
-
-  function updateZIndex(){
-    zIndex=getZIndex();
-  }
-
-	public function new(x:Float, y:Float, leData:Int, player:Int, skin:String) {
+	public function new(x:Float, y:Float, leData:Int, player:Int) {
 		colorSwap = new ColorSwap();
 		shader = colorSwap.shader;
 		noteData = leData;
-		scaleDefault = new FlxPoint();
 		this.player = player;
 		this.noteData = leData;
 		super(x, y);
 
+		var skin:String = 'NOTE_assets';
+		if(PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
+		texture = skin; //Load texture and anims
+
+		scrollFactor.set();
+	}
+
+	public function reloadNote()
+	{
+		var lastAnim:String = null;
+		if(animation.curAnim != null) lastAnim = animation.curAnim.name;
+
 		if(PlayState.isPixelStage)
 		{
-			loadGraphic(Paths.image('pixelUI/' + skin));
+			loadGraphic(Paths.image('pixelUI/' + texture));
 			width = width / 4;
 			height = height / 5;
-			loadGraphic(Paths.image('pixelUI/' + skin), true, Math.floor(width), Math.floor(height));
+			loadGraphic(Paths.image('pixelUI/' + texture), true, Math.floor(width), Math.floor(height));
+
+			antialiasing = false;
+			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
+
 			animation.add('green', [6]);
 			animation.add('red', [7]);
 			animation.add('blue', [5]);
 			animation.add('purple', [4]);
-
-			antialiasing = false;
-			setGraphicSize(Std.int(width * ClientPrefs.noteSize * PlayState.daPixelZoom * 1.5));
-
-			switch (Math.abs(leData))
+			switch (Math.abs(noteData) % 4)
 			{
 				case 0:
 					animation.add('static', [0]);
@@ -74,72 +82,48 @@ class StrumNote extends FlxSprite
 		}
 		else
 		{
-			if (!isMajinNote) frames = Paths.getSparrowAtlas(skin);
-			else frames = Paths.getSparrowAtlas(skin, 'exe');
+			frames = Paths.getSparrowAtlas(texture);
 			animation.addByPrefix('green', 'arrowUP');
 			animation.addByPrefix('blue', 'arrowDOWN');
 			animation.addByPrefix('purple', 'arrowLEFT');
 			animation.addByPrefix('red', 'arrowRIGHT');
 
 			antialiasing = ClientPrefs.globalAntialiasing;
-			setGraphicSize(Std.int(width * ClientPrefs.noteSize));
+			setGraphicSize(Std.int(width * 0.7));
 
-			if(PlayState.SONG.isRing)
-				switch (Math.abs(leData))
-				{
-					case 0:
-						animation.addByPrefix('static', 'arrowLEFT');
-						animation.addByPrefix('pressed', 'left press', 24, false);
-						animation.addByPrefix('confirm', 'left confirm', 24, false);
-					case 1:
-						animation.addByPrefix('static', 'arrowDOWN');
-						animation.addByPrefix('pressed', 'down press', 24, false);
-						animation.addByPrefix('confirm', 'down confirm', 24, false);
-					case 3:
-						animation.addByPrefix('static', 'arrowUP');
-						animation.addByPrefix('pressed', 'up press', 24, false);
-						animation.addByPrefix('confirm', 'up confirm', 24, false);
-					case 4:
-						animation.addByPrefix('static', 'arrowRIGHT');
-						animation.addByPrefix('pressed', 'right press', 24, false);
-						animation.addByPrefix('confirm', 'right confirm', 24, false);
-					case 2:
-						animation.addByPrefix('static', 'arrowSPACE0');
-						animation.addByPrefix('pressed', 'space press', 24, false);
-						animation.addByPrefix('confirm', 'space confirm', 24, false);
-				}
-
-			else
-				switch (Math.abs(leData))
-				{
-					case 0:
-						animation.addByPrefix('static', 'arrowLEFT');
-						animation.addByPrefix('pressed', 'left press', 24, false);
-						animation.addByPrefix('confirm', 'left confirm', 24, false);
-					case 1:
-						animation.addByPrefix('static', 'arrowDOWN');
-						animation.addByPrefix('pressed', 'down press', 24, false);
-						animation.addByPrefix('confirm', 'down confirm', 24, false);
-					case 2:
-						animation.addByPrefix('static', 'arrowUP');
-						animation.addByPrefix('pressed', 'up press', 24, false);
-						animation.addByPrefix('confirm', 'up confirm', 24, false);
-					case 3:
-						animation.addByPrefix('static', 'arrowRIGHT');
-						animation.addByPrefix('pressed', 'right press', 24, false);
-						animation.addByPrefix('confirm', 'right confirm', 24, false);
-				}
+			switch (Math.abs(noteData) % 4)
+			{
+				case 0:
+					animation.addByPrefix('static', 'arrowLEFT');
+					animation.addByPrefix('pressed', 'left press', 24, false);
+					animation.addByPrefix('confirm', 'left confirm', 24, false);
+				case 1:
+					animation.addByPrefix('static', 'arrowDOWN');
+					animation.addByPrefix('pressed', 'down press', 24, false);
+					animation.addByPrefix('confirm', 'down confirm', 24, false);
+				case 2:
+					animation.addByPrefix('static', 'arrowUP');
+					animation.addByPrefix('pressed', 'up press', 24, false);
+					animation.addByPrefix('confirm', 'up confirm', 24, false);
+				case 3:
+					animation.addByPrefix('static', 'arrowRIGHT');
+					animation.addByPrefix('pressed', 'right press', 24, false);
+					animation.addByPrefix('confirm', 'right confirm', 24, false);
+			}
 		}
-
 		updateHitbox();
-		scrollFactor.set();
-		scaleDefault.set(scale.x,scale.y);
+
+		if(lastAnim != null)
+		{
+			playAnim(lastAnim, true);
+		}
 	}
 
 	public function postAddedToGroup() {
 		playAnim('static');
-		if(player == 0)
-			x += 50;
+		x += Note.swagWidth * noteData;
+		x += 50;
+		x += ((FlxG.width / 2) * player);
 		ID = noteData;
 	}
 
@@ -151,11 +135,11 @@ class StrumNote extends FlxSprite
 				resetAnim = 0;
 			}
 		}
-		updateZIndex();
-
-		/*if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
-			updateConfirmOffset();
-		}*/
+		//if(animation.curAnim != null){ //my bad i was upset
+		if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
+			centerOrigin();
+		//}
+		}
 
 		super.update(elapsed);
 	}
@@ -169,18 +153,16 @@ class StrumNote extends FlxSprite
 			colorSwap.saturation = 0;
 			colorSwap.brightness = 0;
 		} else {
-			colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
-			colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
-			colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
+			if (noteData > -1 && noteData < ClientPrefs.arrowHSV.length)
+			{
+				colorSwap.hue = ClientPrefs.arrowHSV[noteData][0] / 360;
+				colorSwap.saturation = ClientPrefs.arrowHSV[noteData][1] / 100;
+				colorSwap.brightness = ClientPrefs.arrowHSV[noteData][2] / 100;
+			}
 
 			if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
-				updateConfirmOffset();
+				centerOrigin();
 			}
 		}
-	}
-
-	function updateConfirmOffset() { //TO DO: Find a calc to make the offset work fine on other angles
-		// offset.x -= 13*(ClientPrefs.noteSize/0.7);
-		// offset.y -= 13*(ClientPrefs.noteSize/0.7);
 	}
 }

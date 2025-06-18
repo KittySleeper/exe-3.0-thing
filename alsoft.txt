@@ -1,0 +1,14 @@
+[general]
+sample-type=float32
+stereo-mode=headphones
+stereo-encoding=stereo
+hrtf=false
+cf_level=1
+resampler=fast_bsinc24
+front-stablizer=true
+output-limiter=false
+volume-adjust=0
+[decoder]
+hq-mode=false
+distance-comp=false
+nfc=false
