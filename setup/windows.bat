@@ -4,7 +4,6 @@ title FNF' Vs Sonic.exe Necessary Libraries Installer
 echo.
 echo Installing necessary libraries. Please wait...
 echo.
-haxelib setup C:\haxelib
 haxelib install tjson --quiet
 haxelib install hxjsonast --quiet
 haxelib set flixel 5.5.0 --never --quiet

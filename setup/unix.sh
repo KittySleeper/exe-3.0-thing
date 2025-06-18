@@ -1,10 +1,7 @@
-@echo off
-cls
-title FNF' Vs Sonic.exe Necessary Libraries Installer
-echo.
-echo Installing necessary libraries. Please wait...
-echo.
-haxelib setup C:\haxelib
+cd ..
+echo Makking the main haxelib and setuping folder in same time..
+mkdir ~/haxelib && haxelib setup ~/haxelib
+echo FNF' Vs Sonic.exe Necessary Libraries Installer
 haxelib install tjson --quiet
 haxelib install hxjsonast --quiet
 haxelib set flixel 5.5.0 --never --quiet
@@ -23,5 +20,4 @@ haxelib git linc_luajit https://github.com/superpowers04/linc_luajit.git
 haxelib install hxcpp-debug-server
 haxelib list
 echo.
-echo Done! Press any key to close the app!
-pause
+echo Done!
