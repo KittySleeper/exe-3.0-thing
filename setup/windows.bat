@@ -19,6 +19,7 @@ haxelib set flixel-addons 3.3.2
 haxelib set hscript 2.4.0
 haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
 haxelib git linc_luajit https://github.com/superpowers04/linc_luajit.git
+haxelib install format
 haxelib install hxcpp-debug-server
 haxelib list
 echo.

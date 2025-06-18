@@ -17,6 +17,7 @@ haxelib install hscript 2.4.0
 haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
 haxelib git linc_luajit https://github.com/superpowers04/linc_luajit.git
 haxelib install hxcpp-debug-server
+haxelib install format
 haxelib list
 echo.
 echo Done!
