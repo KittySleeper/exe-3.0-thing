@@ -97,10 +97,16 @@ class GameOverSubstate extends MusicBeatSubstate
 			WeekData.loadTheFirstEnabledMod();
 			if (PlayState.isStoryMode)
 				MusicBeatState.switchState(new StoryMenuState());
+			else if (PlayState.isEncoreMode)
+				MusicBeatState.switchState(new EncoreState());
+			else if (PlayState.isSoundTest)
+				MusicBeatState.switchState(new SoundTestMenu());
 			else
 				MusicBeatState.switchState(new FreeplayState());
 
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			if (!PlayState.isSoundTest) {
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			}
 			PlayState.instance.callOnLuas('onGameOverConfirm', [false]);
 		}
 

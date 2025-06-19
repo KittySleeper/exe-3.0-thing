@@ -147,21 +147,17 @@ class Note extends FlxSprite
 					noAnimation = true;
 				case 'Static Note':
 					reloadNote('STATIC');
-					Paths.image("hitStatic", 'exe');
 				case 'Hex Note':
-					missHealth=0;
+					missHealth = 0;
 					reloadNote("HEX");
-					hitbox*=0.55;
-					ignoreNote=true;
-					hitCausesMiss=true;
+					hitbox *= 0.55;
+					ignoreNote = true;
 					noteSplashDisabled=true;
 				case 'Phantom Note':
 					hitbox *= 0.5;
 					reloadNote('PHANTOM');
 					ignoreNote = true;
-					hitCausesMiss = true;
 					noteSplashDisabled = true; // I FUCKING HATE THIS PLEASE TURN IT OFF AAAAAAAAAAA
-					// noteSplashTexture = 'HURTnoteSplashes';
 			}
 			noteType = value;
 		}
@@ -210,8 +206,8 @@ class Note extends FlxSprite
 
 		if (isSustainNote && prevNote != null)
 		{
-			alpha = 0.6;
-			multAlpha = 0.6;
+			/*alpha = 0.6;
+			multAlpha = 0.6;*/
 			hitsoundDisabled = true;
 			if(ClientPrefs.downScroll) flipY = true;
 

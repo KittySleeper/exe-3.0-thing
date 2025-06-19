@@ -377,6 +377,9 @@ class PauseSubState extends MusicBeatSubstate
     {
         isClosing = true;
         canInteract = false;
+
+        FlxG.sound.play(Paths.sound("unpause"));
+
         for (highlight in selectionHighlights) {
             FlxTween.tween(highlight, {x: highlight.x + MENU_ANIM_OFFSET * (highlight.ID + 1)}, 0.2, {ease: FlxEase.quadOut});
         }
@@ -404,8 +407,11 @@ class PauseSubState extends MusicBeatSubstate
         FlxTween.tween(timeBar, {alpha: 0}, 0.3, {ease: FlxEase.circOut});
     }
 
-    public static function restartSong()
+    public static function restartSong(noTrans:Bool = false)
     {
+		if(noTrans)
+			FlxTransitionableState.skipNextTransOut = true;
+
         switch(PlayState.SONG.song.toLowerCase()){
 			case 'sunshine':
 				MusicBeatState.getState().transOut = OvalTransitionSubstate;
@@ -419,18 +425,24 @@ class PauseSubState extends MusicBeatSubstate
 
     function exitToMenu()
     {
+        FlxTransitionableState.skipNextTransIn = false;
+
         PlayState.deathCounter = 0;
         PlayState.seenCutscene = false;
+        PlayState.chartingMode = false;
         
         if (PlayState.isStoryMode) {
             MusicBeatState.switchState(new StoryMenuState());
         } else if (PlayState.isEncoreMode) {
+            FlxG.sound.playMusic(Paths.music('freakyMenu'));
             MusicBeatState.switchState(new EncoreState());
+        } else if (PlayState.isSoundTest) {
+            MusicBeatState.switchState(new SoundTestMenu());
         } else {
+            FlxG.sound.playMusic(Paths.music('freakyMenu'));
             MusicBeatState.switchState(new FreeplayState());
         }
-        
-        FlxG.sound.playMusic(Paths.music('freakyMenu'));
+
         PlayState.instance.practiceMode = false;
         PlayState.changedDifficulty = false;
         PlayState.instance.cpuControlled = false;

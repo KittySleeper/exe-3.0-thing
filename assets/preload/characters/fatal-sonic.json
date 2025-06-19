@@ -73,12 +73,12 @@
 		}
 	],
 	"no_antialiasing": true,
-	"image": "characters/fatal-error-sonic",
+	"image": "characters/fatal error/fatal-error-sonic",
 	"position": [
 		150,
 		360
 	],
-	"healthicon": "icon-fatal-sonic",
+	"healthicon": "fatal-sonic",
 	"flip_x": false,
 	"healthbar_colors": [
 		255,

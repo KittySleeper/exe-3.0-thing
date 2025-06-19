@@ -1,5 +1,8 @@
 package mainmenu;
 
+#if desktop
+import Discord.DiscordClient;
+#end
 import flixel.util.FlxTimer;
 import flixel.effects.FlxFlicker;
 import flixel.math.FlxMath;
@@ -8,6 +11,7 @@ import flixel.tweens.FlxTween;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.FlxG;
+import flixel.input.keyboard.FlxKey;
 
 class MainMenuState extends MusicBeatState
 {
@@ -18,7 +22,7 @@ class MainMenuState extends MusicBeatState
 			name: "story_mode",
 			onPress: function()
 			{
-				FlxG.switchState(new StoryMenuState());
+				LoadingState.loadAndSwitchState(new StoryMenuState());
 			}
 		},
 		{
@@ -60,14 +64,21 @@ class MainMenuState extends MusicBeatState
 	var menuObjects:FlxTypedSpriteGroup<FlxSprite>;
 
 	var curSelected:Int = 0;
-	var canPress:Bool = true;
+	var debugKeys:Array<FlxKey>;
 
 	override public function create()
 	{
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
 
-		FlxG.sound.playMusic(Paths.music('storymodemenumusic'));
+		#if desktop
+		// Updating Discord Rich Presence
+		DiscordClient.changePresence("In the Menus", null);
+		#end
+
+		debugKeys = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_1'));
+
+		FlxG.sound.playMusic(Paths.music('freakyMenu'));
 
 		var bg:FlxSprite = new FlxSprite();
 		bg.frames = Paths.getSparrowAtlas('Main_Menu_Spritesheet_Animation');
@@ -76,7 +87,7 @@ class MainMenuState extends MusicBeatState
 		bg.scrollFactor.set(0, 0);
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = true;
+		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
 
 		add(menuObjects = new FlxTypedSpriteGroup());
@@ -97,28 +108,48 @@ class MainMenuState extends MusicBeatState
 		super.create();
 	}
 
+	var canMove:Bool = true;
+
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		if (controls.UI_UP_P && canPress)
-			changeSelection(-1);
-		if (controls.UI_DOWN_P && canPress)
-			changeSelection(1);
+		if (canMove)
+		{
+			if (controls.UI_UP_P) {
+				FlxG.sound.play(Paths.sound('scrollMenu'));
+				changeSelection(-1);
+			}
+			if (controls.UI_DOWN_P) {
+				FlxG.sound.play(Paths.sound('scrollMenu'));
+				changeSelection(1);
+			}
 
-        if (controls.ACCEPT && canPress) {
-			canPress = false;
+			if (controls.BACK)
+			{
+				canMove = false;
+				FlxG.sound.play(Paths.sound('cancelMenu'));
+				MusicBeatState.switchState(new TitleState());
+			}
 
-			for (i => obj in menuObjects.members)
-				if (i != curSelected)
-					FlxTween.tween(obj, {alpha: 0}, 0.4, {onComplete: function(tween){obj.kill();}});
-				else
-					FlxFlicker.flicker(obj, 1, 0.04, false, true);
+			if (controls.ACCEPT) {
+				canMove = false;
+				FlxG.sound.play(Paths.sound('confirmMenu'));
 
-			new FlxTimer().start(1, function(timer) {
-				menuItems[curSelected].onPress();
-			});
-		}
+				for (i => obj in menuObjects.members)
+					if (i != curSelected)
+						FlxTween.tween(obj, {alpha: 0}, 0.4, {onComplete: function(tween){obj.kill();}});
+					else
+						FlxFlicker.flicker(obj, 1, 0.04, false, true);
+
+				new FlxTimer().start(1, function(timer) {
+					menuItems[curSelected].onPress();
+				});
+			} else if (FlxG.keys.anyJustPressed(debugKeys)) {
+				canMove = false;
+				MusicBeatState.switchState(new editors.MasterEditorMenu());
+		    }
+	    }
 	}
 
 	function changeSelection(amt:Int = 0)

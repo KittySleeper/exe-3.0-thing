@@ -176,7 +176,7 @@
 		}
 	],
 	"no_antialiasing": true,
-	"image": "characters/peelout_sonic_sheet",
+	"image": "characters/sonic/peelout_sonic_sheet",
 	"position": [
 		250,
 		410

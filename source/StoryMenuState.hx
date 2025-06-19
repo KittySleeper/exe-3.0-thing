@@ -82,69 +82,64 @@ class StoryMenuState extends MusicBeatState
 		WeekData.reloadWeekFiles(true);
 		persistentUpdate = persistentDraw = true;
 
-		var bg:FlxSprite;
+		FlxG.sound.playMusic(Paths.music('storymodemenumusic'));
 
-		bg = new FlxSprite(0, 0);
+		var bg:FlxSprite = new FlxSprite(0, 0);
 		bg.frames = Paths.getSparrowAtlas('SMMStatic', 'exe');
 		bg.animation.addByPrefix('idlexd', "damfstatic", 24);
 		bg.animation.play('idlexd');
-		bg.alpha = 1;
-		bg.antialiasing = true;
+		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		bg.setGraphicSize(Std.int(bg.width));
 		bg.updateHitbox();
 		add(bg);
 
-		var greyBOX:FlxSprite;
-		greyBOX = new FlxSprite(0, 0).loadGraphic(Paths.image('greybox'));
-		bg.alpha = 1;
-		greyBOX.antialiasing = true;
+		var greyBOX:FlxSprite = new FlxSprite(-5, 0).loadGraphic(Paths.image('sm stuff/greybox'));
+		greyBOX.antialiasing = ClientPrefs.globalAntialiasing;
 		greyBOX.setGraphicSize(Std.int(bg.width));
 		greyBOX.updateHitbox();
 		add(greyBOX);
 
-		bfIDLELAWL = new Boyfriend(0, 0);
+		bfIDLELAWL = new Boyfriend(-50, 0);
 		bfIDLELAWL.scale.x = .4;
 		bfIDLELAWL.scale.y = .4;
 		bfIDLELAWL.screenCenter();
+		bfIDLELAWL.antialiasing = ClientPrefs.globalAntialiasing;
 		bfIDLELAWL.y += 50;
-		bfIDLELAWL.antialiasing = true;
 		bfIDLELAWL.animation.play('idleLAWLAW', true);
 		add(bfIDLELAWL);
 
-		portrait = new FlxSprite(450, 79).loadGraphic(Paths.image('fpstuff/too-slow'));
+		portrait = new FlxSprite(445, 79).loadGraphic(Paths.image('sm stuff/arts/too-slow'));
 		portrait.setGraphicSize(Std.int(portrait.width * 0.275));
-		portrait.antialiasing = true;
+		portrait.antialiasing = ClientPrefs.globalAntialiasing;
 		portrait.updateHitbox();
 		add(portrait);
 
-		staticscreen = new FlxSprite(450, 0);
+		staticscreen = new FlxSprite(445, 0);
 		staticscreen.frames = Paths.getSparrowAtlas('screenstatic', 'exe');
 		staticscreen.animation.addByPrefix('screenstaticANIM', "screenSTATIC", 24);
 		staticscreen.animation.play('screenstaticANIM');
 		staticscreen.y += 79;
 		staticscreen.alpha = 0.3;
-		staticscreen.antialiasing = true;
+		staticscreen.antialiasing = ClientPrefs.globalAntialiasing;
 		staticscreen.setGraphicSize(Std.int(staticscreen.width * 0.275));
 		staticscreen.updateHitbox();
 		add(staticscreen);
 
-		var yellowBOX:FlxSprite;
-		yellowBOX = new FlxSprite(0, 0).loadGraphic(Paths.image('yellowbox'));
-		yellowBOX.alpha = 1;
-		yellowBOX.antialiasing = true;
+		var yellowBOX:FlxSprite = new FlxSprite(-10, 0).loadGraphic(Paths.image('sm stuff/yellowbox'));
+		yellowBOX.antialiasing = ClientPrefs.globalAntialiasing;
 		yellowBOX.setGraphicSize(Std.int(bg.width));
 		yellowBOX.updateHitbox();
 		add(yellowBOX);
 
-		redBOX = new FlxSprite(0, 0).loadGraphic(Paths.image('redbox'));
-		redBOX.alpha = 1;
-		redBOX.antialiasing = true;
+		redBOX = new FlxSprite(0, 0).loadGraphic(Paths.image('sm stuff/redbox'));
+		redBOX.antialiasing = ClientPrefs.globalAntialiasing;
 		redBOX.setGraphicSize(Std.int(bg.width));
 		redBOX.updateHitbox();
 		add(redBOX);
 
 		sprDifficulty = new FlxSprite(550, 600);
 		sprDifficulty.frames = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+		sprDifficulty.antialiasing = ClientPrefs.globalAntialiasing;
 		sprDifficulty.animation.addByPrefix('easy', 'EASY');
 		sprDifficulty.animation.addByPrefix('normal', 'NORMAL');
 		sprDifficulty.animation.addByPrefix('hard', 'HARD');
@@ -154,6 +149,7 @@ class StoryMenuState extends MusicBeatState
 
 		leftArrow = new FlxSprite(sprDifficulty.x - 150, sprDifficulty.y);
 		leftArrow.frames = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+		leftArrow.antialiasing = ClientPrefs.globalAntialiasing;
 		leftArrow.setGraphicSize(Std.int(leftArrow.width * 0.8));
 		leftArrow.animation.addByPrefix('idle', "arrow left");
 		leftArrow.animation.addByPrefix('press', "arrow push left");
@@ -162,6 +158,7 @@ class StoryMenuState extends MusicBeatState
 
 		rightArrow = new FlxSprite(sprDifficulty.x + 230, sprDifficulty.y);
 		rightArrow.frames = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+		rightArrow.antialiasing = ClientPrefs.globalAntialiasing;
 		rightArrow.setGraphicSize(Std.int(rightArrow.width * 0.8));
 		rightArrow.animation.addByPrefix('idle', "arrow right");
 		rightArrow.animation.addByPrefix('press', "arrow push right");
@@ -170,6 +167,7 @@ class StoryMenuState extends MusicBeatState
 
 		leftArrow2 = new FlxSprite(325, 136 + 5);
 		leftArrow2.frames = Paths.getSparrowAtlas('campaign_menu_UI_assets_alt');
+		leftArrow2.antialiasing = ClientPrefs.globalAntialiasing;
 		leftArrow2.setGraphicSize(Std.int(leftArrow2.width * 0.8));
 		leftArrow2.animation.addByPrefix('idle', "arrow left");
 		leftArrow2.animation.addByPrefix('press', "arrow push left");
@@ -178,6 +176,7 @@ class StoryMenuState extends MusicBeatState
 
 		rightArrow2 = new FlxSprite(820, 136 + 5);
 		rightArrow2.frames = Paths.getSparrowAtlas('campaign_menu_UI_assets_alt');
+		rightArrow2.antialiasing = ClientPrefs.globalAntialiasing;
 		rightArrow2.setGraphicSize(Std.int(rightArrow2.width * 0.8));
 		rightArrow2.animation.addByPrefix('idle', "arrow right");
 		rightArrow2.animation.addByPrefix('press', "arrow push right");
@@ -196,6 +195,7 @@ class StoryMenuState extends MusicBeatState
 
 		if (curdiff == 0)
 			curdiff = 4;
+
 		if (curdiff > 3)
 			curdiff = 1;
 
@@ -231,7 +231,7 @@ class StoryMenuState extends MusicBeatState
 			else if (real > FlxG.save.data.storyProgress)
 				real = 0;
 
-			portrait.loadGraphic(Paths.image('fpstuff/' + songArray[real]));
+			portrait.loadGraphic(Paths.image('sm stuff/arts/' + songArray[real]));
 
 			FlxTween.cancelTweensOf(staticscreen);
 			staticscreen.alpha = 1;
@@ -310,6 +310,7 @@ class StoryMenuState extends MusicBeatState
 				PlayState.SONG = Song.loadFromJson(songArray[real].toLowerCase() + curDifficulty, songArray[real].toLowerCase());
 				PlayState.isStoryMode = true;
 				PlayState.isEncoreMode = false;
+				PlayState.isSoundTest = false;
 				LoadingState.loadAndSwitchState(new PlayState());
 			}
 

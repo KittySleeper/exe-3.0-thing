@@ -176,7 +176,7 @@
 		}
 	],
 	"no_antialiasing": true,
-	"image": "characters/running_sonic_sheet",
+	"image": "characters/sonic/running_sonic_sheet",
 	"position": [
 		0,
 		0

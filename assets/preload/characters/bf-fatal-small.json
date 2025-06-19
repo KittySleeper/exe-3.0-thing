@@ -101,7 +101,7 @@
 		}
 	],
 	"no_antialiasing": true,
-	"image": "characters/tiny-bf",
+	"image": "characters/bf/tiny-bf",
 	"position": [
 		120,
 		410

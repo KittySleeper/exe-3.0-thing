@@ -56,6 +56,12 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
+		#if !VIDEOS_ALLOWED
+		PlayerSettings.init();
+
+		FlxG.save.bind('exenew', 'kittysleeper');
+		ClientPrefs.loadPrefs();
+		#end
 		// flixel automatically saves your volume!
 		if(FlxG.save.data.volume != null) {
 			FlxG.sound.volume = FlxG.save.data.volume;
@@ -149,14 +155,14 @@ class TitleState extends MusicBeatState
 		bg.alpha = .75;
 		bg.scale.x = 3;
 		bg.scale.y = 3;
-		bg.antialiasing = true;
+		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		bg.updateHitbox();
 		bg.screenCenter();
 		add(bg);
 
 		logoBlBUMP = new FlxSprite(0, 0);
 		logoBlBUMP.loadGraphic(Paths.image('logo'));
-		logoBlBUMP.antialiasing = true;
+		logoBlBUMP.antialiasing = ClientPrefs.globalAntialiasing;
 
 		logoBlBUMP.scale.x = .5;
 		logoBlBUMP.scale.y = .5;
@@ -171,7 +177,7 @@ class TitleState extends MusicBeatState
 		titleText.frames = Paths.getSparrowAtlas('titleEnterNEW');
 		titleText.animation.addByPrefix('idle', "Press Enter to Begin instance 1", 24);
 		titleText.animation.addByPrefix('press', "ENTER PRESSED instance 1", 24, false);
-		titleText.antialiasing = true;
+		titleText.antialiasing = ClientPrefs.globalAntialiasing;
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
 		titleText.screenCenter();
@@ -206,11 +212,6 @@ class TitleState extends MusicBeatState
 	{
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
-
-		if (FlxG.keys.justPressed.F)
-		{
-			FlxG.fullscreen = !FlxG.fullscreen;
-		}
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
 

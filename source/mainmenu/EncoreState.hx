@@ -62,7 +62,7 @@ class EncoreState extends MusicBeatState
 			var box:FlxSprite = new FlxSprite(i * 780, 0).loadGraphic(Paths.image('FreeBox'));
 			boxgrp.add(box);
 
-			var char:FlxSprite = new FlxSprite(i * 780, 0).loadGraphic(Paths.image('fpstuff/' + songArray[i].toLowerCase() + "-encore"));
+			var char:FlxSprite = new FlxSprite(i * 780, 0).loadGraphic(Paths.image('fp stuff/arts/' + songArray[i].toLowerCase() + "-encore"));
 			boxgrp.add(char);
 		}
 
@@ -82,8 +82,8 @@ class EncoreState extends MusicBeatState
 	{
 		super.update(elapsed);
 
-		var upP = FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.A;
-		var downP = FlxG.keys.justPressed.RIGHT || FlxG.keys.justPressed.D;
+		var upP = controls.UI_LEFT_P;
+		var downP = controls.UI_RIGHT_P;
 		var accepted = controls.ACCEPT;
 
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
@@ -142,10 +142,6 @@ class EncoreState extends MusicBeatState
 
 	function changeSelection(change:Int = 0)
 	{
-		#if !switch
-		// NGio.logEvent('Fresh');
-		#end
-
 		if (change == 1 && curSelected != songArray.length - 1)
 		{
 			cdman = false;
@@ -181,7 +177,5 @@ class EncoreState extends MusicBeatState
 			curSelected = 0;
 		else if (curSelected > songArray.length - 1)
 			curSelected = songArray.length - 1;
-
-		// NGio.logEvent('Fresh');
 	}
 }

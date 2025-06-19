@@ -35,7 +35,7 @@
 		}
 	],
 	"no_antialiasing": true,
-	"image": "characters/chaotix_bf_death",
+	"image": "characters/bf/death/chaotix_bf_death",
 	"position": [
 		0,
 		350

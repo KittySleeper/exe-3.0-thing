@@ -94,7 +94,7 @@ class Character extends FlxSprite
 		for(i in 0...4){
 			var ghost = new FlxSprite();
 			ghost.visible = false;
-			ghost.antialiasing = true;
+			ghost.antialiasing = ClientPrefs.globalAntialiasing;
 			ghost.alpha = 0.6;
 			animGhosts.push(ghost);
 		}

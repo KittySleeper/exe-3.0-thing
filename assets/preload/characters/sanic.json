@@ -542,7 +542,7 @@
 		}
 	],
 	"no_antialiasing": false,
-	"image": "characters/sanic",
+	"image": "characters/sanic/sanic",
 	"position": [
 		-70,
 		-110

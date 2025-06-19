@@ -217,7 +217,7 @@
 		}
 	],
 	"no_antialiasing": false,
-	"image": "characters/BFPhase3_Perspective",
+	"image": "characters/bf/BFPhase3_Perspective",
 	"position": [
 		-750,
 		420

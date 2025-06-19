@@ -35,7 +35,7 @@
 		}
 	],
 	"no_antialiasing": true,
-	"image": "characters/sl4sh_bf_gameover",
+	"image": "characters/bf/death/sl4sh_bf_gameover",
 	"position": [
 		0,
 		350

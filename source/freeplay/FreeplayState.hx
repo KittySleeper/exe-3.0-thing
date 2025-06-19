@@ -74,7 +74,7 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 		bg.setGraphicSize(1280, 720);
 		add(bg);
 
-		scrollingBg = new FlxBackdrop(Paths.image('sidebar'));
+		scrollingBg = new FlxBackdrop(Paths.image('fp stuff/sidebar'));
 		scrollingBg.repeatAxes = Y;
 		add(scrollingBg);
 
@@ -92,14 +92,14 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 				box.ID = i;
 				box.setGraphicSize(Std.int(box.width / 1.7));
 
-				FlxG.log.add('searching for ' + 'assets/images/fpstuff/' + charArray[i].toLowerCase() + '.png');
+				FlxG.log.add('searching for ' + 'assets/images/fp stuff/arts/' + charArray[i].toLowerCase() + '.png');
 
 				if (charUnlocked.contains(charArray[i]))
 				{
-					if (FileSystem.exists('assets/images/fpstuff/' + charArray[i].toLowerCase() + '.png'))
+					if (FileSystem.exists('assets/images/fp stuff/arts/' + charArray[i].toLowerCase() + '.png'))
 					{
 						var char:FlxSkewedSprite = new FlxSkewedSprite(0, i * 415);
-						char.loadGraphic(Paths.image('fpstuff/' + charArray[i].toLowerCase()));
+						char.loadGraphic(Paths.image('fp stuff/arts/' + charArray[i].toLowerCase()));
 						boxgrp.add(char);
 						char.ID = i;
 						char.setGraphicSize(Std.int(box.width / 1.7));
@@ -107,14 +107,14 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 					else
 					{
 						var char:FlxSkewedSprite = new FlxSkewedSprite(0, i * 415);
-						char.loadGraphic(Paths.image('fpstuff/placeholder'));
+						char.loadGraphic(Paths.image('fp stuff/arts/placeholder'));
 						boxgrp.add(char);
 						char.ID = i;
 						char.setGraphicSize(Std.int(box.width / 1.7));
 					}
 				} else {
 					var char:FlxSkewedSprite = new FlxSkewedSprite(0, i * 415);
-					char.loadGraphic(Paths.image('fpstuff/locked'));
+					char.loadGraphic(Paths.image('fp stuff/arts/locked'));
 					boxgrp.add(char);
 					char.ID = i;
 					char.setGraphicSize(Std.int(box.width / 1.7));
@@ -197,8 +197,8 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 
 		super.update(elapsed);
 
-		var upP = FlxG.keys.justPressed.UP || FlxG.keys.justPressed.W;
-		var downP = FlxG.keys.justPressed.DOWN || FlxG.keys.justPressed.S;
+		var upP = controls.UI_UP_P;
+		var downP = controls.UI_DOWN_P;
 		var accepted = controls.ACCEPT;
 
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
@@ -253,9 +253,10 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 
 				var songArray:Array<String> = CharSongList.getSongsByChar(charArray[curSelected]);
 
-				PlayState.SONG = Song.loadFromJson(songArray[curSongSelected].toLowerCase() + '-hard', songArray[curSongSelected].toLowerCase());
+				PlayState.SONG = Song.loadFromJson(songArray[curSongSelected].toLowerCase(), songArray[curSongSelected].toLowerCase());
 				PlayState.isStoryMode = false;
 				PlayState.isEncoreMode = false;
+				PlayState.isSoundTest = false;
 				PlayState.storyDifficulty = 2;
 				PlayState.storyWeek = 1;
 				FlxG.sound.play(Paths.sound('confirmMenu'));
@@ -401,11 +402,11 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 						{
 							case "hog":
 								if (curSongSelected == 1)
-									thing.loadGraphic(Paths.image('fpstuff/scorched'));
+									thing.loadGraphic(Paths.image('fp stuff/arts/scorched'));
 								else
-									thing.loadGraphic(Paths.image('fpstuff/hog'));
+									thing.loadGraphic(Paths.image('fp stuff/arts/hog'));
 							default:
-								thing.loadGraphic(Paths.image('fpstuff/' + charArray[curSelected]));
+								thing.loadGraphic(Paths.image('fp stuff/arts/' + charArray[curSelected]));
 						}
 					}
 				});

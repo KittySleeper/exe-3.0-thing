@@ -1,9 +1,10 @@
 package;
 
-import flixel.graphics.FlxGraphic;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
+import flixel.graphics.FlxGraphic;
+import flixel.input.keyboard.FlxKey;
 import openfl.Assets;
 import openfl.Lib;
 import openfl.display.FPS;
@@ -30,7 +31,7 @@ class Main extends Sprite
 		width: 1280, // WINDOW width
 		height: 720, // WINDOW height
 		initialState: WarningState, // initial game state
-        zoom: -1, // If -1, zoom is automatically calculated to fit the window dimensions.
+        zoom: -1, // If -1, zoom is automatically calculated to fit the window dimensions
 		framerate: 60, // default framerate
 		skipSplash: true, // if the default flixel splash screen should be skipped
 		startFullscreen: false // if the game should start at fullscreen mode
@@ -66,6 +67,17 @@ class Main extends Sprite
 		{
 			addEventListener(Event.ADDED_TO_STAGE, init);
 		}
+
+		// was taken from doido engine
+		// thanks @nebulazorua, @crowplexus, @diogotvv
+		FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, (e) ->
+		{
+			if (e.keyCode == FlxKey.F11)
+				FlxG.fullscreen = !FlxG.fullscreen;
+			
+			if (e.keyCode == FlxKey.ENTER && e.altKey)
+				e.stopImmediatePropagation();
+		}, false, 100);
 	}
 
 	private function init(?E:Event):Void
@@ -109,11 +121,6 @@ class Main extends Sprite
 		ClientPrefs.loadDefaultKeys();
 
 		addChild(new FlxGame(game.width, game.height, game.initialState, game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
-
-		PlayerSettings.init();
-
-		FlxG.save.bind('exenew', 'kittysleeper');
-		ClientPrefs.loadPrefs();
 
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);

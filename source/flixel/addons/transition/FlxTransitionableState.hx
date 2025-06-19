@@ -4,7 +4,6 @@ package flixel.addons.transition;
 // the substate should have a start, setStatus and finishCallback property
 // after that, how the substate behaves is up to you.
 
-
 import flixel.FlxState;
 import flixel.FlxSubState;
 
@@ -26,14 +25,9 @@ class FlxTransitionableState extends FlxState
 	public var hasTransIn(get, never):Bool;
 	public var hasTransOut(get, never):Bool;
 
-	////
-	var transOutFinished:Bool = false;
-
 	var _exiting:Bool = false;
 	var _onExit:Void->Void;
 	var _onEnter:Void->Void;
-
-	////
 
 	/**
 	 * Create a state with the ability to do visual transitions
@@ -63,23 +57,16 @@ class FlxTransitionableState extends FlxState
 		transitionIn();
 	}
 
-	#if (flixel <= "5.9.0") override #end public function switchTo(nextState:FlxState):Bool
+	override public function startOutro(onOutroComplete:Void->Void):Void
 	{
-		// If you get an exception here it's probably due to Flixel calling this function using reflection
 		if (!hasTransOut)
-			return true;
+		{
+			super.startOutro(onOutroComplete);
+			return;
+		}
 
-		if (!_exiting)
-			transitionToState(nextState);
-
-		return transOutFinished;
-	}
-
-	function transitionToState(nextState:FlxState):Void
-	{
-		// play the exit transition, and when it's done call FlxG.switchState
 		_exiting = true;
-		transitionOut(FlxG.switchState.bind(nextState));
+		transitionOut(onOutroComplete);
 
 		if (skipNextTransOut)
 		{
@@ -122,7 +109,7 @@ class FlxTransitionableState extends FlxState
 			trans.finishCallback = finishTransOut;
 			trans.start(IN);
 		}else{
-			_onExit();
+			if (_onExit != null) _onExit();
 		}
 	}
 
@@ -148,8 +135,6 @@ class FlxTransitionableState extends FlxState
 
 	function finishTransOut()
 	{
-		transOutFinished = true;
-
 		if (!_exiting)
 		{
 			closeSubState();

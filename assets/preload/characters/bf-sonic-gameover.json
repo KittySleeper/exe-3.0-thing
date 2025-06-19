@@ -58,7 +58,7 @@
 		}
 	],
 	"no_antialiasing": true,
-	"image": "characters/sonic_gameover",
+	"image": "characters/sonic/gameover/sonic_gameover",
 	"position": [
 		200,
 		350

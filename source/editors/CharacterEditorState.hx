@@ -94,7 +94,7 @@ class CharacterEditorState extends MusicBeatState
 	var healthBarBG:FlxSprite;
 
 	var lastAutoSaveTime:Float = 0;
-	static inline final AUTO_SAVE_INTERVAL:Float = 60; // Auto save every 60 seconds
+	static inline final AUTO_SAVE_INTERVAL:Float = 25; // Auto save every 25 seconds
 
 	override function create()
 	{
@@ -463,6 +463,7 @@ class CharacterEditorState extends MusicBeatState
 
 		charDropDown = new FlxUIDropDownMenuCustom(10, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(character:String)
 		{
+			Paths.clearUnusedMemory();
 			daAnim = characterList[Std.parseInt(character)];
 			check_player.checked = daAnim.startsWith('bf');
 			loadChar(!check_player.checked);

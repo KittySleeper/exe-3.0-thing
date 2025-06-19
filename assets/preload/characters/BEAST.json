@@ -8,7 +8,7 @@
 			],
 			"anim": "idle-loop",
 			"fps": 24,
-			"name": "idle",
+			"name": "Beast_IDLE",
 			"indices": [
 				0,
 				1,
@@ -34,7 +34,7 @@
 			],
 			"anim": "singUP-loop",
 			"fps": 24,
-			"name": "up",
+			"name": "Beast_UP",
 			"indices": [
 				0,
 				1,
@@ -50,7 +50,7 @@
 			],
 			"anim": "singLEFT-loop",
 			"fps": 24,
-			"name": "left",
+			"name": "Beast_LEFT",
 			"indices": [
 				0,
 				1,
@@ -67,7 +67,7 @@
 			],
 			"anim": "singRIGHT-loop",
 			"fps": 24,
-			"name": "right",
+			"name": "Beast_RIGHT",
 			"indices": [
 				0,
 				1,
@@ -84,7 +84,7 @@
 			],
 			"anim": "singDOWN-loop",
 			"fps": 24,
-			"name": "down",
+			"name": "Beast_DOWN",
 			"indices": [
 				0,
 				1,
@@ -261,7 +261,7 @@
 		}
 	],
 	"no_antialiasing": false,
-	"image": "characters/Beast",
+	"image": "characters/xenophanes/tt/Beast",
 	"position": [
 		-240,
 		-330
@@ -269,9 +269,9 @@
 	"healthicon": "BEAST",
 	"flip_x": false,
 	"healthbar_colors": [
-		163,
-		75,
-		255
+		41,
+		6,
+		117
 	],
 	"camera_position": [
 		10,

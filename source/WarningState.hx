@@ -25,7 +25,8 @@ class WarningState extends MusicBeatState
 
         PlayerSettings.init();
 
-        FlxG.save.bind('exenew', 'kittysleeper');
+		FlxG.save.bind('exenew', 'kittysleeper');
+		ClientPrefs.loadPrefs();
 
         if (!FlxG.save.data.firstBoot) {
             FlxG.switchState(new Intro());

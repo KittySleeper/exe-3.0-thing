@@ -74,13 +74,23 @@ class ExtrasMenuSubState extends MusicBeatSubstate
 	{
 		super.update(elapsed);
 
-		if (controls.UI_UP_P)
+		if (controls.UI_UP_P && canPress) {
+			FlxG.sound.play(Paths.sound('scrollMenu'));
 			changeSelection(-1);
-		if (controls.UI_DOWN_P)
+		}
+		if (controls.UI_DOWN_P && canPress) {
+			FlxG.sound.play(Paths.sound('scrollMenu'));
 			changeSelection(1);
+		}
+		if (controls.BACK && canPress)
+		{
+			FlxG.sound.play(Paths.sound('cancelMenu'));
+			MusicBeatState.switchState(new MainMenuState());
+		}
 		if (controls.ACCEPT && canPress)
 		{
 			canPress = false;
+			FlxG.sound.play(Paths.sound('confirmMenu'));
 
 			for (i => obj in menuObjects.members)
 				if (i != curSelected)

@@ -200,7 +200,7 @@
 		}
 	],
 	"no_antialiasing": false,
-	"image": "characters/endless_bf",
+	"image": "characters/bf/endless_bf",
 	"position": [
 		0,
 		350

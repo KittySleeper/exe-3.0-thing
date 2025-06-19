@@ -1,53 +1,43 @@
 package mainmenu;
 
 import flixel.FlxState;
-import flixel.graphics.frames.FlxAtlasFrames;
-import flixel.util.FlxTimer;
-import flixel.tweens.FlxTween;
-import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.addons.display.FlxGridOverlay;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import lime.utils.Assets;
-import flixel.FlxCamera;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
 import openfl.filters.ShaderFilter;
-#if windows
+import flixel.system.FlxSound;
+#if desktop
 import Discord.DiscordClient;
 #end
 
 class SoundTestMenu extends MusicBeatState
 {
-	var woahmanstopspammin:Bool = true;
-
-	var whiteshit:FlxSprite;
-
-	var daValue:Int = 0;
-	var pcmValue:Int = 0;
-	var coldsteelCode:Int = 0;
-
+	// now we can change PCM and DA values very easily
+	static final PCM_MAX:Int = 69;
+	static final DA_MAX:Int = 37;
+	
+	var interactable:Bool = true;
+	var inCameo:Bool = false;
 	var soundCooldown:Bool = true;
-
-	var funnymonke:Bool = true;
-
-	var incameo:Bool = false;
-
-	var cameoBg:FlxSprite;
-	var cameoImg:FlxSprite;
-	var cameoThanks:FlxSprite;
-
-	var pcmNO = new FlxText(FlxG.width / 6, FlxG.height / 2, 0, 'PCM  NO .', 23);
-	var daNO = new FlxText(FlxG.width * .6, FlxG.height / 2, 0, 'DA  NO .', 23);
-
-	var pcmNO_NUMBER = new FlxText(FlxG.width / 6, FlxG.height / 2, 0, '0', 23);
-	var daNO_NUMBER = new FlxText(FlxG.width / 6, FlxG.height / 2, 0, '0', 23);
-
-	var cam:FlxCamera;
-
-	var peakSongs:Map<String, Array<String>> = [
+	var isPCMSelected:Bool = true;
+	
+	var secretCodeProgress:Int = 0;
+	var pcmValue:Int = 0;
+	var daValue:Int = 0;
+	
+	var bg:FlxSprite;
+	var overlay:FlxSprite;
+	var titleText:FlxText;
+	var pcmLabel:FlxText;
+	var daLabel:FlxText;
+	var pcmValueText:FlxText;
+	var daValueText:FlxText;
+	var cameoImage:FlxSprite;
+	
+	final peakSongs:Map<String, Array<String>> = [
 		"12 25" => ["endless"],
 		"7 7" => ["cycles", "fate"],
 		"8 21" => ["chaos"],
@@ -57,372 +47,273 @@ class SoundTestMenu extends MusicBeatState
 		"20 5" => ["b4cksl4sh"],
 		"11 20" => ["burning"]
 	];
+	
+	final cameoSecrets:Map<String, CameoData> = [
+		"41 1" => { image: "Razencro", music: "Razencro" },
+		"1 13" => { image: "divide" },
+		"9 10" => { image: "Sunkeh" },
+		"6 6" => { image: "GamerX" },
+		"32 8" => { image: "Marstarbro", music: "Marstarbro" },
+		"6 12" => { image: "a small error" }
+	];
+	
+	final SECRET_CODE = ["P", "E", "R", "S", "O", "N", "E", "L"];
 
 	override function create()
 	{
-		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
-		
-		cam = new FlxCamera();
-		FlxG.cameras.reset(cam);
-		cam.bgColor.alpha = 0;
-		FlxCamera.defaultCameras = [cam];
+		Paths.clearStoredMemory();
 
-		#if windows
-		DiscordClient.changePresence('In the Sound Test Menu', null);
+		FlxTransitionableState.skipNextTransIn = true;
+		FlxTransitionableState.skipNextTransOut = true;
+		
+		#if desktop
+		DiscordClient.changePresence('In Sound Test', null);
 		#end
 
-		new FlxTimer().start(0.1, function(tmr:FlxTimer)
-		{
-			FlxG.sound.playMusic(Paths.music('breakfast'));
-		});
-
-		whiteshit = new FlxSprite().makeGraphic(1280, 720, FlxColor.WHITE);
-		whiteshit.alpha = 0;
-
-		cameoBg = new FlxSprite();
-		cameoImg = new FlxSprite();
-		cameoThanks = new FlxSprite();
-
-		FlxG.sound.music.stop();
-
-		var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('backgroundST'));
-		bg.scrollFactor.x = 0;
-		bg.scrollFactor.y = 0;
-		bg.setGraphicSize(Std.int(bg.width * 1));
+		FlxG.sound.playMusic(Paths.music('breakfast'), true);
+		
+		bg = new FlxSprite(-100).loadGraphic(Paths.image('backgroundST'));
+		bg.scale.set(1.2, 1.2);
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = true;
+		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
-
-		var soundtesttext = new FlxText(0, 0, 0, 'SOUND TEST', 25);
-		soundtesttext.screenCenter();
-		soundtesttext.y -= 180;
-		soundtesttext.x -= 33;
-		soundtesttext.setFormat("Sonic CD Menu Font Regular", 25, FlxColor.fromRGB(0, 163, 255));
-		soundtesttext.setBorderStyle(SHADOW, FlxColor.BLACK, 4, 1);
-		add(soundtesttext);
-
-		pcmNO.setFormat("Sonic CD Menu Font Regular", 23, FlxColor.fromRGB(174, 179, 251));
-		pcmNO.setBorderStyle(SHADOW, FlxColor.fromRGB(106, 110, 159), 4, 1);
-
-		daNO.setFormat("Sonic CD Menu Font Regular", 23, FlxColor.fromRGB(174, 179, 251));
-		daNO.setBorderStyle(SHADOW, FlxColor.fromRGB(106, 110, 159), 4, 1);
-
-		pcmNO.y -= 70;
-		pcmNO.x += 100;
-
-		daNO.y -= 70;
-
-		add(pcmNO);
-
-		add(daNO);
-
-		pcmNO_NUMBER.y -= 70;
-		pcmNO_NUMBER.x += 270;
-		pcmNO_NUMBER.setFormat("Sonic CD Menu Font Regular", 23, FlxColor.fromRGB(174, 179, 251));
-		pcmNO_NUMBER.setBorderStyle(SHADOW, FlxColor.fromRGB(106, 110, 159), 4, 1);
-		add(pcmNO_NUMBER);
-
-		daNO_NUMBER.y -= 70;
-		daNO_NUMBER.x += daNO.x - 70;
-		daNO_NUMBER.setFormat("Sonic CD Menu Font Regular", 23, FlxColor.fromRGB(174, 179, 251));
-		daNO_NUMBER.setBorderStyle(SHADOW, FlxColor.fromRGB(106, 110, 159), 4, 1);
-		add(daNO_NUMBER);
-
-		cameoBg.visible = false;
-		add(cameoBg);
-
-		cameoThanks.visible = false;
-		add(cameoThanks);
-
-		cameoImg.visible = false;
-		add(cameoImg);
-
-		add(whiteshit);
+		
+		createStUI();
+		
+		FlxG.camera.zoom = 1.05;
+		FlxTween.tween(FlxG.camera, {zoom: 1}, 0.6, {ease: flixel.tweens.FlxEase.elasticOut});
+		
+		// discord white theme be like
+		overlay = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
+		overlay.alpha = 1;
+		add(overlay);
+		FlxTween.tween(overlay, {alpha: 0}, 0.5);
+		
+		cameoImage = new FlxSprite();
+		cameoImage.visible = false;
+		add(cameoImage);
+		
+		super.create();
 	}
 
-	function changeNumber(selection:Int)
+	function createStUI()
 	{
-		if (funnymonke)
-		{
-			pcmValue += selection;
-			if (pcmValue < 0)
-				pcmValue = 69;
-			if (pcmValue > 69)
-				pcmValue = 0;
-		}
-		else
-		{
-			daValue += selection;
-			if (daValue < 0)
-				daValue = 37;
-			if (daValue > 37)
-				daValue = 0;
-		}
+		titleText = new FlxText(0, 80, 0, "SOUND TEST", 36);
+		titleText.setFormat("Sonic CD Menu Font Regular", 36, FlxColor.fromRGB(0, 163, 255), CENTER);
+		titleText.setBorderStyle(SHADOW, FlxColor.BLACK, 3);
+		titleText.screenCenter(X);
+		add(titleText);
+		
+		final yPos = FlxG.height / 2 - 50;
+		final xOffset = 215;
+		
+		pcmLabel = createLabel("PCM NO.", FlxG.width / 2 - xOffset - 120, yPos);
+		daLabel = createLabel("DA NO.", FlxG.width / 2 + xOffset - 100, yPos);
+		
+		pcmValueText = createValueText(pcmValue, pcmLabel.x + 180, yPos);
+		daValueText = createValueText(daValue, daLabel.x + 150, yPos);
+		
+		add(pcmLabel);
+		add(daLabel);
+		add(pcmValueText);
+		add(daValueText);
+		
+		updateSelection();
+	}
+	
+	function createLabel(text:String, x:Float, y:Float):FlxText
+	{
+		final label = new FlxText(x, y, 0, text, 28);
+		label.setFormat("Sonic CD Menu Font Regular", 28, FlxColor.fromRGB(174, 179, 251));
+		label.setBorderStyle(SHADOW, FlxColor.fromRGB(106, 110, 159), 3);
+		return label;
+	}
+	
+	function createValueText(value:Int, x:Float, y:Float):FlxText
+	{
+		final text = new FlxText(x, y, 0, value < 10 ? '0$value' : '$value', 28);
+		text.setFormat("Sonic CD Menu Font Regular", 28, FlxColor.WHITE);
+		text.setBorderStyle(SHADOW, FlxColor.GRAY, 3);
+		return text;
 	}
 
-	function flashyWashy(a:Bool)
+	function updateSelection()
 	{
-		if (a == true)
-		{
-			FlxG.sound.play(Paths.sound('confirmMenu'));
-			FlxTween.tween(whiteshit, {alpha: 1}, 0.4);
-		}
-		else
-			FlxTween.color(whiteshit, 0.1, FlxColor.WHITE, FlxColor.BLUE);
-		FlxTween.tween(whiteshit, {alpha: 0}, 0.2);
+		pcmLabel.color = isPCMSelected ? FlxColor.YELLOW : FlxColor.fromRGB(174, 179, 251);
+		daLabel.color = !isPCMSelected ? FlxColor.YELLOW : FlxColor.fromRGB(174, 179, 251);
+		
+		pcmValueText.text = pcmValue < 10 ? '0$pcmValue' : '$pcmValue';
+		daValueText.text = daValue < 10 ? '0$daValue' : '$daValue';
 	}
 
-	function doTheThing(first:Int, second:Int)
+	function changeValue(delta:Int)
 	{
-		var sigmaArray:String = first + " " + second;
+		if (isPCMSelected) {
+			pcmValue = FlxMath.wrap(pcmValue + delta, 0, PCM_MAX);
+		} else {
+			daValue = FlxMath.wrap(daValue + delta, 0, DA_MAX);
+		}
+		updateSelection();
+	}
 
-		if (peakSongs.exists(sigmaArray))
-		{
-			woahmanstopspammin = false;
-			PlayStateChangeables.nocheese = false;
+	function tryPlaySound()
+	{
+		final combo = '$pcmValue $daValue';
+		
+		if (peakSongs.exists(combo)) {
+			startSong(peakSongs.get(combo));
+			return;
+		}
+		
+		if (cameoSecrets.exists(combo)) {
+			showCameo(cameoSecrets.get(combo));
+			return;
+		}
+		
+		playErrorSound();
+	}
 
-			PlayState.SONG = Song.loadFromJson(peakSongs.get(sigmaArray)[0] + "-hard", peakSongs.get(sigmaArray)[0]);
-			PlayState.storyPlaylist = peakSongs.get(sigmaArray);
-			PlayState.isStoryMode = true;
-			PlayState.isEncoreMode = false;
-			PlayState.storyDifficulty = 2;
-			PlayState.storyWeek = 1;
-			flashyWashy(true);
-			new FlxTimer().start(2, function(tmr:FlxTimer)
-			{
-				LoadingState.loadAndSwitchState(new PlayState());
-			});
-		}
-		else if (first == 41 && second == 1)
-		{
-			woahmanstopspammin = false;
-			flashyWashy(true);
-			new FlxTimer().start(2, function(tmr:FlxTimer)
-			{
-				cameoImg.visible = true;
-				cameoImg.loadGraphic(Paths.image('cameostuff/Razencro'));
-				cameoImg.setSize(1280, 720);
-				flashyWashy(false);
+	function startSong(songArray:Array<String>)
+	{
+		interactable = false;
+		
+		PlayState.SONG = Song.loadFromJson(songArray[0], songArray[0]);
+		PlayState.storyPlaylist = songArray;
+		PlayState.storyDifficulty = 1;
+		PlayState.storyWeek = 1;
+		PlayState.isStoryMode = false;
+		PlayState.isEncoreMode = false;
+		PlayState.isSoundTest = true;
+		
+		var confirmSound = FlxG.sound.play(Paths.sound('confirmMenu'));
+		FlxTween.tween(overlay, {alpha: 1}, 0.4, {
+			onComplete: _ -> {
+				confirmSound.onComplete = () -> {
+					LoadingState.loadAndSwitchState(new PlayState());
+				}
+			}
+		});
+	}
+
+	function showCameo(data:CameoData)
+	{
+		interactable = false;
+		inCameo = true;
+		
+		cameoImage.loadGraphic(Paths.image('cameostuff/${data.image}'));
+		cameoImage.setSize(1280, 720);
+		cameoImage.screenCenter();
+		cameoImage.visible = true;
+		
+		FlxTween.tween(overlay, {alpha: 1}, 0.4, {
+			onComplete: _ -> {
+				FlxTween.tween(overlay, {alpha: 0}, 0.3);
+				if (data.music != null) {
+					FlxG.sound.playMusic(Paths.music('cameostuff/${data.music}'));
+				}
+			}
+		});
+	}
+
+	function playErrorSound()
+	{
+		if (!soundCooldown) return;
+		
+		soundCooldown = false;
+		FlxG.sound.play(Paths.sound('deniedMOMENT'));
+		
+		new FlxTimer().start(0.4, _ -> {
+			soundCooldown = true;
+		});
+	}
+
+	override function update(elapsed:Float)
+	{
+		if (!interactable) {
+			if (inCameo && controls.BACK) {
 				FlxG.sound.music.stop();
-			});
-			new FlxTimer().start(2.1, function(tmr:FlxTimer)
-			{
-				FlxG.sound.playMusic(Paths.music('cameostuff/Razencro'));
-				incameo = true;
+				FlxG.resetState();
+				return;
+			}
+
+			super.update(elapsed);
+			return;
+		}
+		
+		if (controls.UI_LEFT_P || controls.UI_RIGHT_P) {
+			isPCMSelected = !isPCMSelected;
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+			updateSelection();
+		}
+		
+		if (controls.UI_UP_P) {
+			changeValue(-1);
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+		}
+		
+		if (controls.UI_DOWN_P) {
+			changeValue(1);
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+		}
+		
+		if (controls.ACCEPT) {
+			tryPlaySound();
+		}
+		
+		if (controls.BACK) {
+			interactable = false;
+			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxTween.tween(overlay, {alpha: 1}, 0.4, {
+				onComplete: _ -> LoadingState.loadAndSwitchState(new MainMenuState())
 			});
 		}
-		else if (first == 1 && second == 13) // This for you div, R.I.P
-		{
-			woahmanstopspammin = false;
-			flashyWashy(true);
-			new FlxTimer().start(2, function(tmr:FlxTimer)
-			{
-				cameoImg.visible = true;
-				cameoImg.loadGraphic(Paths.image('cameostuff/divide'));
-				cameoImg.setSize(1280, 720);
-				flashyWashy(false);
-				FlxG.sound.music.stop();
-			});
-			new FlxTimer().start(2.1, function(tmr:FlxTimer)
-			{
-				incameo = true;
-			});
+		
+		// Nothing personel kid
+		if (interactable) checkSecretCode();
+		
+		super.update(elapsed);
+	}
+	
+	function checkSecretCode()
+	{
+		if (secretCodeProgress >= SECRET_CODE.length) return;
+		
+		var expectedKey = SECRET_CODE[secretCodeProgress];
+		var keyPressed = false;
+		var correctKey = false;
+		
+		for (key in FlxG.keys.getIsDown()) {
+			if (key.justPressed) {
+				keyPressed = true;
+				var pressedKey = key.ID.toString();
+				if (pressedKey == expectedKey) {
+					correctKey = true;
+					break;
+				}
+			}
 		}
-		else if (first == 9 && second == 10) // This for you div, R.I.P
-		{
-			woahmanstopspammin = false;
-			flashyWashy(true);
-			new FlxTimer().start(2, function(tmr:FlxTimer)
-			{
-				cameoImg.visible = true;
-				cameoImg.loadGraphic(Paths.image('cameostuff/Sunkeh'));
-				cameoImg.setSize(1280, 720);
-				flashyWashy(false);
-				FlxG.sound.music.stop();
-			});
-			new FlxTimer().start(2.1, function(tmr:FlxTimer)
-			{
-				incameo = true;
-			});
-		}
-		else if (first == 6 && second == 6) // This for you div, R.I.P
-		{
-			woahmanstopspammin = false;
-			flashyWashy(true);
-			new FlxTimer().start(2, function(tmr:FlxTimer)
-			{
-				cameoImg.visible = true;
-				cameoImg.loadGraphic(Paths.image('cameostuff/GamerX'));
-				cameoImg.setSize(1280, 720);
-				flashyWashy(false);
-				FlxG.sound.music.stop();
-			});
-			new FlxTimer().start(2.1, function(tmr:FlxTimer)
-			{
-				incameo = true;
-			});
-		}
-		else if (first == 32 && second == 8)
-		{
-			woahmanstopspammin = false;
-			flashyWashy(true);
-			new FlxTimer().start(2, function(tmr:FlxTimer)
-			{
-				cameoImg.visible = true;
-				cameoImg.loadGraphic(Paths.image('cameostuff/Marstarbro'));
-				cameoImg.setSize(1280, 720);
-				flashyWashy(false);
-				FlxG.sound.music.stop();
-			});
-			new FlxTimer().start(2.1, function(tmr:FlxTimer)
-			{
-				FlxG.sound.playMusic(Paths.music('cameostuff/Marstarbro'));
-				incameo = true;
-			});
-		}
-		else if (first == 6 && second == 12)
-		{
-			woahmanstopspammin = false;
-			flashyWashy(true);
-			new FlxTimer().start(2, function(tmr:FlxTimer)
-			{
-				cameoImg.visible = true;
-				cameoImg.loadGraphic(Paths.image('cameostuff/a small error'));
-				flashyWashy(false);
-				FlxG.sound.music.stop();
-			});
-			new FlxTimer().start(2.1, function(tmr:FlxTimer)
-			{
-				incameo = true;
-			});
-		}
-		else
-		{
-			if (soundCooldown)
-			{
-				soundCooldown = false;
-				FlxG.sound.play(Paths.sound('deniedMOMENT'));
-				new FlxTimer().start(0.8, function(tmr:FlxTimer)
-				{
-					soundCooldown = true;
-				});
+		
+		if (correctKey) {
+			secretCodeProgress++;
+			if (secretCodeProgress == SECRET_CODE.length) {
+				startSong(["personel"]);
+			}
+		} else if (keyPressed) {
+			for (key in SECRET_CODE) {
+				for (k in FlxG.keys.getIsDown()) {
+					if (k.justPressed && k.ID.toString() == key) {
+						secretCodeProgress = 0;
+						return;
+					}
+				}
 			}
 		}
 	}
+}
 
-	override public function update(elapsed:Float)
-	{
-		if (FlxG.keys.justPressed.RIGHT || FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.A || FlxG.keys.justPressed.D)
-			if (woahmanstopspammin)
-				funnymonke = !funnymonke;
-
-		if (FlxG.keys.justPressed.DOWN || FlxG.keys.justPressed.S)
-			changeNumber(1);
-
-		if (FlxG.keys.justPressed.UP || FlxG.keys.justPressed.W)
-			changeNumber(-1);
-
-		if (FlxG.keys.justPressed.ENTER && woahmanstopspammin)
-			doTheThing(pcmValue, daValue);
-
-		if (coldsteelCode == 9)
-		{
-			PlayStateChangeables.nocheese = false;
-			PlayState.SONG = Song.loadFromJson('personel-hard', 'personel');
-			PlayState.isStoryMode = false;
-			PlayState.isEncoreMode = false;
-			PlayState.storyDifficulty = 2;
-			PlayState.storyWeek = 1;
-
-			flashyWashy(true);
-			new FlxTimer().start(2, function(tmr:FlxTimer)
-			{
-				LoadingState.loadAndSwitchState(new PlayState());
-			});
-		}
-
-		if (FlxG.keys.justPressed.ENTER && !woahmanstopspammin && incameo)
-			LoadingState.loadAndSwitchState(new SoundTestMenu());
-
-		if (FlxG.keys.justPressed.ESCAPE && woahmanstopspammin && !incameo)
-			LoadingState.loadAndSwitchState(new MainMenuState());
-
-		if (funnymonke)
-		{
-			pcmNO.setFormat("Sonic CD Menu Font Regular", 23, FlxColor.fromRGB(254, 174, 0));
-			pcmNO.setBorderStyle(SHADOW, FlxColor.fromRGB(253, 36, 3), 4, 1);
-
-			daNO.setFormat("Sonic CD Menu Font Regular", 23, FlxColor.fromRGB(174, 179, 251));
-			daNO.setBorderStyle(SHADOW, FlxColor.fromRGB(106, 110, 159), 4, 1);
-		}
-		else
-		{
-			pcmNO.setFormat("Sonic CD Menu Font Regular", 23, FlxColor.fromRGB(174, 179, 251));
-			pcmNO.setBorderStyle(SHADOW, FlxColor.fromRGB(106, 110, 159), 4, 1);
-
-			daNO.setFormat("Sonic CD Menu Font Regular", 23, FlxColor.fromRGB(254, 174, 0));
-			daNO.setBorderStyle(SHADOW, FlxColor.fromRGB(253, 36, 3), 4, 1);
-		}
-
-		if (pcmValue < 10)
-			pcmNO_NUMBER.text = '0' + Std.string(pcmValue);
-		else
-			pcmNO_NUMBER.text = Std.string(pcmValue);
-
-		if (daValue < 10)
-			daNO_NUMBER.text = '0' + Std.string(daValue);
-		else
-			daNO_NUMBER.text = Std.string(daValue);
-
-		if (FlxG.keys.justPressed.P)
-			if (coldsteelCode == 0)
-				coldsteelCode = 1;
-			else
-				coldsteelCode == 0;
-		if (FlxG.keys.justPressed.E)
-			if (coldsteelCode == 1)
-				coldsteelCode = 2;
-			else
-				coldsteelCode == 0;
-		if (FlxG.keys.justPressed.R)
-			if (coldsteelCode == 2)
-				coldsteelCode = 3;
-			else
-				coldsteelCode == 0;
-		if (FlxG.keys.justPressed.S)
-			if (coldsteelCode == 3)
-				coldsteelCode = 4;
-			else
-				coldsteelCode == 0;
-		if (FlxG.keys.justPressed.O)
-			if (coldsteelCode == 4)
-				coldsteelCode = 5;
-			else
-				coldsteelCode == 0;
-		if (FlxG.keys.justPressed.N)
-			if (coldsteelCode == 5)
-				coldsteelCode = 6;
-			else
-				coldsteelCode == 0;
-		if (FlxG.keys.justPressed.N)
-			if (coldsteelCode == 6)
-				coldsteelCode = 7;
-			else
-				coldsteelCode == 0;
-		if (FlxG.keys.justPressed.E)
-			if (coldsteelCode == 7)
-				coldsteelCode = 8;
-			else
-				coldsteelCode == 0;
-		if (FlxG.keys.justPressed.L)
-			if (coldsteelCode == 8)
-				coldsteelCode = 9;
-			else
-				coldsteelCode == 0;
-		// lol i copied this from titlestate lmfao
-
-		super.update(elapsed);
-	}
+typedef CameoData = {
+	image:String,
+	?music:String
 }

@@ -196,7 +196,7 @@
 		}
 	],
 	"no_antialiasing": false,
-	"image": "characters/tailsdoll_p2",
+	"image": "characters/tailsdoll/tailsdoll_p2",
 	"position": [
 		730,
 		60

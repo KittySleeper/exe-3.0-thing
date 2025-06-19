@@ -119,7 +119,7 @@ class Intro extends MusicBeatState
 		versionInfo.font = Paths.font("chaotix.ttf");
 		versionInfo.active = false;
 		versionInfo.alignment = JUSTIFY;
-		versionInfo.antialiasing = true;
+		versionInfo.antialiasing = ClientPrefs.globalAntialiasing;
 		versionInfo.y -= versionInfo.height;
 		add(versionInfo);
 		#end

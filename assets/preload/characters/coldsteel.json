@@ -57,7 +57,7 @@
 		}
 	],
 	"no_antialiasing": false,
-	"image": "characters/coldsteel_assets",
+	"image": "characters/coldsteel/coldsteel_assets",
 	"position": [
 		-150,
 		-60
