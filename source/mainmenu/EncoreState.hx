@@ -114,7 +114,7 @@ class EncoreState extends MusicBeatState
 
 		if (controls.BACK)
 		{
-			FlxG.switchState(new MainMenuState());
+			MusicBeatState.switchState(new MainMenuState());
 		}
 
 		songtext.text = songArray[curSelected].toLowerCase().replace("-", " ");

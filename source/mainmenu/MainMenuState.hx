@@ -29,21 +29,21 @@ class MainMenuState extends MusicBeatState
 			name: "freeplay",
 			onPress: function()
 			{
-				FlxG.switchState(new FreeplayState());
+				MusicBeatState.switchState(new FreeplayState());
 			}
 		},
 		{
 			name: "encore",
 			onPress: function()
 			{
-				FlxG.switchState(new EncoreState());
+				MusicBeatState.switchState(new EncoreState());
 			}
 		},
 		{
 			name: "sound_test",
 			onPress: function()
 			{
-				FlxG.switchState(new SoundTestMenu());
+				MusicBeatState.switchState(new SoundTestMenu());
 			}
 		},
 		{

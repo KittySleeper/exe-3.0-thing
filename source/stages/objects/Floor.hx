@@ -1,4 +1,4 @@
-package objects.stages;
+package stages.objects;
 
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.math.FlxPoint;

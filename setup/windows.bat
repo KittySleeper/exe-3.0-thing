@@ -6,8 +6,8 @@ echo Installing necessary libraries. Please wait...
 echo.
 haxelib install tjson --quiet
 haxelib install hxjsonast --quiet
-haxelib install flixel 5.5.0
-haxelib set flixel 5.5.0 --quiet
+haxelib install flixel 5.6.2
+haxelib set flixel 5.6.2 --quiet
 haxelib git lime https://github.com/GreenColdTea/lime-9.0.0
 haxelib install openfl 9.4.1
 haxelib set openfl 9.4.1

@@ -16,8 +16,8 @@ import Discord.DiscordClient;
 class SoundTestMenu extends MusicBeatState
 {
 	// now we can change PCM and DA values very easily
-	static final PCM_MAX:Int = 69;
-	static final DA_MAX:Int = 37;
+	static final PCM_MAX:Int = 99;
+	static final DA_MAX:Int = 99;
 	
 	var interactable:Bool = true;
 	var inCameo:Bool = false;
@@ -39,13 +39,13 @@ class SoundTestMenu extends MusicBeatState
 	
 	final peakSongs:Map<String, Array<String>> = [
 		"12 25" => ["endless"],
-		"7 7" => ["cycles", "fate"],
+		"7 7" => ["cycles"],
 		"8 21" => ["chaos"],
 		"4 20" => ["too-fest"],
-		"6 20" => ["substantial", "digitalized"],
+		"8 17" => ["my-horizon"],
+		"19 63" => ["round-a-bout"],
 		"66 6" => ["sunshine", "soulless"],
-		"20 5" => ["b4cksl4sh"],
-		"11 20" => ["burning"]
+		"40 3" => ["prey", "fight-or-flight"]
 	];
 	
 	final cameoSecrets:Map<String, CameoData> = [
@@ -205,6 +205,7 @@ class SoundTestMenu extends MusicBeatState
 		cameoImage.loadGraphic(Paths.image('cameostuff/${data.image}'));
 		cameoImage.setSize(1280, 720);
 		cameoImage.screenCenter();
+		cameoImage.antialiasing = ClientPrefs.globalAntialiasing;
 		cameoImage.visible = true;
 		
 		FlxTween.tween(overlay, {alpha: 1}, 0.4, {

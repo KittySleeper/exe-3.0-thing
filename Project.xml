@@ -101,7 +101,7 @@
 	<assets path="assets/fonts" embed='true'/>
 	<!-- _______________________________ Libraries ______________________________ -->
 
-	<haxelib name="flixel" version="5.5.0"/>
+	<haxelib name="flixel" version="5.6.2"/>
 	<haxedev set='webgl'/>
 
 	<haxelib name="flixel-ui" version="2.6.3"/>

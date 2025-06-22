@@ -25,7 +25,7 @@ class ExtrasMenuSubState extends MusicBeatSubstate
 			name: "skins",
 			onPress: function()
 			{
-				FlxG.switchState(new SkinsMenuState());
+				MusicBeatState.switchState(new SkinsMenuState());
 			}
 		},
 		{

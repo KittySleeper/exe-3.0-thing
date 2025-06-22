@@ -41,7 +41,7 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 
 	var boxgrp:SkewSpriteGroup;
 
-	var bg:FlxSprite;
+	var bg:FlxBackdrop;
 
 	var scrollingBg:FlxBackdrop;
 
@@ -69,9 +69,10 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 		whiteshit = new FlxSprite().makeGraphic(1280, 720, FlxColor.WHITE);
 		whiteshit.alpha = 0;
 
-		bg = new FlxSprite().loadGraphic(Paths.image('backgroundlool'));
+		bg = new FlxBackdrop(Paths.image('backgroundlool'));
 		bg.screenCenter();
 		bg.setGraphicSize(1280, 720);
+		bg.repeatAxes = X;
 		add(bg);
 
 		scrollingBg = new FlxBackdrop(Paths.image('fp stuff/sidebar'));
@@ -152,15 +153,15 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 			{
 				var diff = curSelected - sprite.ID;
 				trace(diff, sprite.ID, curSelected);
-				FlxTween.tween(sprite, {alpha: 0.5}, 0.2);
-				FlxTween.tween(sprite.scale, {x: 0.465, y: 0.465}, 0.2, {ease: FlxEase.expoOut});
-				FlxTween.tween(sprite.skew, {x: 0, y: 0}, 0.2, {ease: FlxEase.expoOut});
+				FlxTween.tween(sprite, {alpha: 0.5}, 0.25);
+				FlxTween.tween(sprite.scale, {x: 0.465, y: 0.465}, 0.25, {ease: FlxEase.expoOut});
+				FlxTween.tween(sprite.skew, {x: 0, y: 0}, 0.25, {ease: FlxEase.expoOut});
 			}
 			else
 			{
-				FlxTween.tween(sprite, {alpha: 1}, 0.2);
-				FlxTween.tween(sprite.scale, {x: 0.58, y: 0.58}, 0.2, {ease: FlxEase.expoOut});
-				FlxTween.tween(sprite.skew, {x: 0, y: 0}, 0.2, {ease: FlxEase.expoOut});
+				FlxTween.tween(sprite, {alpha: 1}, 0.25);
+				FlxTween.tween(sprite.scale, {x: 0.58, y: 0.58}, 0.25, {ease: FlxEase.expoOut});
+				FlxTween.tween(sprite.skew, {x: 0, y: 0}, 0.25, {ease: FlxEase.expoOut});
 			}
 		});
 		for (i in 0...CharSongList.getSongsByChar(charArray[curSelected]).length)
@@ -176,7 +177,7 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 					FlxG.height / 2 - 30 * CharSongList.getSongsByChar(charArray[curSelected])
 					.length + i * 30 * CharSongList.getSongsByChar(charArray[curSelected]).length,
 					FlxG.width, "???");
-			text.setFormat("Sonic CD Menu Font Regular", 36, 0xFFFFFFFF, CENTER);
+			text.setFormat("Sonic CD Menu Font Regular", 34, 0xFFFFFFFF, CENTER);
 			text.ID = i;
 			textgrp.add(text);
 		}
@@ -193,7 +194,8 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 
 	override function update(elapsed:Float)
 	{
-		scrollingBg.y += 1;
+		scrollingBg.y -= 1;
+		bg.x += 1;
 
 		super.update(elapsed);
 
@@ -231,7 +233,7 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			if (!selecting)
-				FlxG.switchState(new MainMenuState());
+				MusicBeatState.switchState(new MainMenuState());
 			else
 			{
 				scoreText.text = "";
@@ -265,10 +267,10 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 				switch (songArray[curSongSelected])
 				{
 					case 'sunshine':
-						transOut = OvalTransitionSubstate;
+						CustomShapeTransition.shape = "oval";
 						LoadingState.loadAndSwitchState(new PlayState());
 					case 'cycles':
-						transOut = XTransitionSubstate;
+						CustomShapeTransition.shape = "X";
 						LoadingState.loadAndSwitchState(new PlayState());
 					default:
 						FlxTween.tween(whiteshit, {alpha: 1}, 0.4);
@@ -330,7 +332,7 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 			{
 				cdman = false;
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				FlxTween.tween(boxgrp, {y: boxgrp.y - 415}, 0.2, {
+				FlxTween.tween(boxgrp, {y: boxgrp.y - 415}, 0.25, {
 					ease: FlxEase.expoOut,
 					onComplete: function(sus:FlxTween)
 					{
@@ -342,7 +344,7 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 			{
 				cdman = false;
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				FlxTween.tween(boxgrp, {y: boxgrp.y + 415}, 0.2, {
+				FlxTween.tween(boxgrp, {y: boxgrp.y + 415}, 0.25, {
 					ease: FlxEase.expoOut,
 					onComplete: function(sus:FlxTween)
 					{
@@ -364,13 +366,13 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 				{
 					if (sprite.ID == curSelected)
 					{
-						FlxTween.tween(sprite, {alpha: 1}, 0.2);
-						FlxTween.tween(sprite.scale, {x: 0.58, y: 0.58}, 0.2, {ease: FlxEase.expoOut});
+						FlxTween.tween(sprite, {alpha: 1}, 0.25);
+						FlxTween.tween(sprite.scale, {x: 0.58, y: 0.58}, 0.25, {ease: FlxEase.expoOut});
 					}
 					else
 					{
-						FlxTween.tween(sprite, {alpha: 0.5}, 0.2);
-						FlxTween.tween(sprite.scale, {x: 0.465, y: 0.465}, 0.2, {ease: FlxEase.expoOut});
+						FlxTween.tween(sprite, {alpha: 0.5}, 0.25);
+						FlxTween.tween(sprite.scale, {x: 0.465, y: 0.465}, 0.25, {ease: FlxEase.expoOut});
 					}
 				});
 				for (i in 0...CharSongList.getSongsByChar(charArray[curSelected]).length)
@@ -386,7 +388,7 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 							FlxG.height / 2 - 30 * CharSongList.getSongsByChar(charArray[curSelected])
 							.length + i * 30 * CharSongList.getSongsByChar(charArray[curSelected]).length,
 							FlxG.width, "???");
-					text.setFormat("Sonic CD Menu Font Regular", 36, 0xFFFFFFFF, CENTER);
+					text.setFormat("Sonic CD Menu Font Regular", 34, 0xFFFFFFFF, CENTER);
 					text.ID = i;
 					textgrp.add(text);
 				}

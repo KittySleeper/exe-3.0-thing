@@ -1551,8 +1551,7 @@ class FunkinLua {
 			return true;
 		});
 		Lua_helper.add_callback(lua, "restartSong", function(?skipTransition:Bool = false) {
-			PlayState.instance.persistentUpdate = false;
-			PauseSubState.restartSong();
+			PlayState.instance.restartSong();
 			return true;
 		});
 		Lua_helper.add_callback(lua, "exitSong", function(?skipTransition:Bool = false) {
@@ -1563,6 +1562,9 @@ class FunkinLua {
 			}
 
 			PlayState.cancelMusicFadeTween();
+			CustomShapeTransition.nextCamera = PlayState.instance.camOther;
+			if(FlxTransitionableState.skipNextTransIn)
+				CustomShapeTransition.nextCamera = null;
 
 			if(PlayState.isStoryMode)
 				MusicBeatState.switchState(new StoryMenuState());

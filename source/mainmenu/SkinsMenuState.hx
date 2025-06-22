@@ -70,7 +70,7 @@ class SkinsMenuState extends MusicBeatState {
         }
 
         if (controls.BACK)
-            FlxG.switchState(new MainMenuState());
+            MusicBeatState.switchState(new MainMenuState());
     }
 
     public function changeSelection(amt:Int = 0) {

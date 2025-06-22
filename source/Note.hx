@@ -143,27 +143,34 @@ class Note extends FlxSprite
 					}
 					hitCausesMiss = true;
 					hitbox *= 0.67;
+
+					colorSwap.hue = 0;
+					colorSwap.saturation = 0;
+					colorSwap.brightness = 0;
 				case 'No Animation':
 					noAnimation = true;
 				case 'Static Note':
 					reloadNote('STATIC');
 				case 'Hex Note':
-					missHealth = 0;
 					reloadNote("HEX");
 					hitbox *= 0.55;
 					ignoreNote = true;
-					noteSplashDisabled=true;
+					hitCausesMiss = true;
+					noteSplashDisabled = true;
 				case 'Phantom Note':
 					hitbox *= 0.5;
 					reloadNote('PHANTOM');
 					ignoreNote = true;
+					hitCausesMiss = true;
 					noteSplashDisabled = true; // I FUCKING HATE THIS PLEASE TURN IT OFF AAAAAAAAAAA
 			}
 			noteType = value;
 		}
-		noteSplashHue = colorSwap.hue;
-		noteSplashSat = colorSwap.saturation;
-		noteSplashBrt = colorSwap.brightness;
+		if (colorSwap != null) {
+			noteSplashHue = colorSwap.hue;
+			noteSplashSat = colorSwap.saturation;
+			noteSplashBrt = colorSwap.brightness;
+		}
 		return value;
 	}
 
@@ -227,7 +234,7 @@ class Note extends FlxSprite
 			{
 				prevNote.animation.play(colArray[prevNote.noteData % 4] + 'hold');
 
-				prevNote.scale.y *= Conductor.stepCrochet / 193.25;
+				prevNote.scale.y *= Conductor.stepCrochet / 190;
 				if(PlayState.instance != null)
 				{
 					prevNote.scale.y *= PlayState.instance.songSpeed;

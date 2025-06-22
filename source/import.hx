@@ -20,12 +20,7 @@ import flixel.tweens.FlxEase;
 import flixel.group.FlxSpriteGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.addons.transition.FadeTransitionSubstate;
-import flixel.addons.transition.BlankTransitionSubstate;
-import flixel.addons.transition.OvalTransitionSubstate;
-import flixel.addons.transition.XTransitionSubstate;
-import flixel.addons.transition.ShapeTransitionSubstate;
-import flixel.addons.transition.SonicTransitionSubstate;
+import flixel.addons.transition.CustomShapeTransition;
 import shaders.flixel.FlxShader;
 
 // Android things (will be neccesary in the future)
@@ -45,6 +40,8 @@ import freeplay.*;
 import mainmenu.MainMenuState;
 import mainmenu.*;
 import math.*;
+
+import stages.backend.BaseStage;
 
 // Windows API
 #if windows

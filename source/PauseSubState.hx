@@ -366,7 +366,7 @@ class PauseSubState extends MusicBeatSubstate
                 closeMenu();
                 
             case "Restart Song":
-                restartSong();
+                PlayState.instance.restartSong();
                 
             case "Exit to menu":
                 exitToMenu();
@@ -407,26 +407,8 @@ class PauseSubState extends MusicBeatSubstate
         FlxTween.tween(timeBar, {alpha: 0}, 0.3, {ease: FlxEase.circOut});
     }
 
-    public static function restartSong(noTrans:Bool = false)
-    {
-		if(noTrans)
-			FlxTransitionableState.skipNextTransOut = true;
-
-        switch(PlayState.SONG.song.toLowerCase()){
-			case 'sunshine':
-				MusicBeatState.getState().transOut = OvalTransitionSubstate;
-			default:
-                MusicBeatState.getState().transOut = SonicTransitionSubstate;
-		}
-        
-        MusicBeatState.resetState();
-        FlxG.sound.music.volume = 0;
-    }
-
     function exitToMenu()
     {
-        FlxTransitionableState.skipNextTransIn = false;
-
         PlayState.deathCounter = 0;
         PlayState.seenCutscene = false;
         PlayState.chartingMode = false;

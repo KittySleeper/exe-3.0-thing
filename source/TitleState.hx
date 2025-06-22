@@ -59,12 +59,20 @@ class TitleState extends MusicBeatState
 		#if !VIDEOS_ALLOWED
 		PlayerSettings.init();
 
-		FlxG.save.bind('exenew', 'kittysleeper');
+		FlxG.save.bind('fe', 'pzzthefunni');
 		ClientPrefs.loadPrefs();
+
+		Highscore.load();
 		#end
 		// flixel automatically saves your volume!
 		if(FlxG.save.data.volume != null) {
 			FlxG.sound.volume = FlxG.save.data.volume;
+		}
+
+		if(!initialized)
+		{
+			persistentUpdate = true;
+			persistentDraw = true;
 		}
 
 		// DEBUG BULLSHIT
@@ -72,21 +80,14 @@ class TitleState extends MusicBeatState
 		swagShader = new ColorSwap();
 		super.create();
 
-		ClientPrefs.loadPrefs();
-
-		Highscore.load();
-
 		if (FlxG.save.data.weekCompleted != null)
 		{
 			StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
 		}
 
 		FlxG.mouse.visible = false;
-		FlxTransitionableState.defaultTransIn = SonicTransitionSubstate;
-		FlxTransitionableState.defaultTransOut = SonicTransitionSubstate;
-
-		transIn = FlxTransitionableState.defaultTransIn;
-		transOut = FlxTransitionableState.defaultTransOut;
+		
+		CustomShapeTransition.shape = "head";
 
 		#if FREEPLAY
 		FlxTransitionableState.skipNextTransOut=true;
@@ -102,7 +103,7 @@ class TitleState extends MusicBeatState
 		MusicBeatState.switchState(new EncoreState());
 		#else
 
-			#if desktop
+			#if (desktop && !VIDEOS_ALLOWED)
 			DiscordClient.initialize();
 			Application.current.onExit.add (function (exitCode) {
 				DiscordClient.shutdown();
@@ -116,7 +117,6 @@ class TitleState extends MusicBeatState
 		#end
 	}
 
-	var logoBl:FlxSprite;
 	var logoBlBUMP:FlxSprite;
 	var gfDance:FlxSprite;
 	var danceLeft:Bool = false;
@@ -148,7 +148,7 @@ class TitleState extends MusicBeatState
 		Conductor.changeBPM(190);
 		persistentUpdate = true;
 
-		bg = new FlxSprite(0, 0);
+		bg = new FlxSprite();
 		bg.frames = Paths.getSparrowAtlas('NewTitleMenuBG');
 		bg.animation.addByPrefix('idle', "TitleMenuSSBG instance 1", 24);
 		bg.animation.play('idle');
@@ -160,20 +160,15 @@ class TitleState extends MusicBeatState
 		bg.screenCenter();
 		add(bg);
 
-		logoBlBUMP = new FlxSprite(0, 0);
+		logoBlBUMP = new FlxSprite();
 		logoBlBUMP.loadGraphic(Paths.image('logo'));
 		logoBlBUMP.antialiasing = ClientPrefs.globalAntialiasing;
-
 		logoBlBUMP.scale.x = .5;
 		logoBlBUMP.scale.y = .5;
-
 		logoBlBUMP.screenCenter();
-
 		add(logoBlBUMP);
 
-		add(logoBl);
-
-		titleText = new FlxSprite(0, 0);
+		titleText = new FlxSprite();
 		titleText.frames = Paths.getSparrowAtlas('titleEnterNEW');
 		titleText.animation.addByPrefix('idle', "Press Enter to Begin instance 1", 24);
 		titleText.animation.addByPrefix('press', "ENTER PRESSED instance 1", 24, false);
@@ -181,6 +176,7 @@ class TitleState extends MusicBeatState
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
 		titleText.screenCenter();
+		titleText.y += 50;
 		add(titleText);
 
 		if (FlxG.save.data.charactersUnlocked == null)
@@ -267,7 +263,7 @@ class TitleState extends MusicBeatState
 		{
 			if(pressedEnter && code != 4)
 			{
-				if (FlxG.save.data.flashing)
+				if (ClientPrefs.flashing)
 				{
 					titleText.animation.play('press');
 					titleText.animation.finishCallback = function(a:String)
@@ -284,6 +280,8 @@ class TitleState extends MusicBeatState
 				new FlxTimer().start(1, function(tmr:FlxTimer)
 					{
 						FlxTween.tween(logoBlBUMP, {alpha: 0}, 1);
+						if (!ClientPrefs.flashing)
+							FlxTween.tween(titleText, {alpha: 0}, 2);
 					});
 
 				transitioning = true;
