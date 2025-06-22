@@ -752,7 +752,7 @@ class PlayState extends MusicBeatState
 				}
 				dadbattleSmokes = new FlxSpriteGroup(); //troll'd
 
-			case 'angel island': new stages.AngelIslandStage(); //too slow
+			case 'angel-island': new stages.AngelIslandStage(); //too slow
 
 			default:
 

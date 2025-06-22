@@ -39,7 +39,7 @@ class SoundTestMenu extends MusicBeatState
 	
 	final peakSongs:Map<String, Array<String>> = [
 		"12 25" => ["endless"],
-		"7 7" => ["cycles"],
+		"7 7" => ["cycles", "fate"],
 		"8 21" => ["chaos"],
 		"4 20" => ["too-fest"],
 		"8 17" => ["my-horizon"],

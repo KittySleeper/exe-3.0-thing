@@ -59,7 +59,7 @@ class TitleState extends MusicBeatState
 		#if !VIDEOS_ALLOWED
 		PlayerSettings.init();
 
-		FlxG.save.bind('fe', 'pzzthefunni');
+		FlxG.save.bind('exenew', 'kittysleeper');
 		ClientPrefs.loadPrefs();
 
 		Highscore.load();
