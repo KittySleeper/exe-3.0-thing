@@ -5,7 +5,7 @@ override function create() {
 	var bg:BGSprite = new BGSprite('sanicbg', -370, -130, 1.0, 1.0);
     bg.setGraphicSize(Std.int(bg.width * 1.2));
     add(bg);
-    if (ClientPrefs.flashing)
+    if (ClientPrefs.shaders)
     weedVis = new WeedVision();
 }
 override function stepHit() {
@@ -18,11 +18,11 @@ override function stepHit() {
     case 408, 410, 412, 472, 474, 476, 536, 538, 540, 600, 602, 604, 682, 710, 745, 808, 825, 872, 888:
     game.festSpinPlayer();
     case 912:
-    if (ClientPrefs.flashing && weedVis != null) {
+    if (ClientPrefs.shaders && weedVis != null) {
     game.curShader = new ShaderFilter(weedVis);
-    game.camGame.filters([curShader]);
-    game.camHUD.filters([curShader]);
-    game.camOther.filters([curShader]);
+    game.camGame.filters = [curShader];
+    game.camHUD.filters = [curShader];
+    game.camOther.filters = [curShader];
    }
     game.weedSpinningTime = true;
     case 1167:
