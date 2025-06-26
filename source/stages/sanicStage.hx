@@ -20,9 +20,9 @@ override function stepHit() {
     case 912:
     if (ClientPrefs.flashing && weedVis != null) {
     game.curShader = new ShaderFilter(weedVis);
-    game.camGame.setFilters([curShader]);
-    game.camHUD.setFilters([curShader]);
-    game.camOther.setFilters([curShader]);
+    game.camGame.filters([curShader]);
+    game.camHUD.filters([curShader]);
+    game.camOther.filters([curShader]);
    }
     game.weedSpinningTime = true;
     case 1167:
