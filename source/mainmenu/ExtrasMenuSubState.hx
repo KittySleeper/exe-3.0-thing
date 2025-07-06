@@ -18,7 +18,7 @@ class ExtrasMenuSubState extends MusicBeatSubstate
 			name: "garden",
 			onPress: function()
 			{
-				FlxG.state.openSubState(new DAGardenSubState());
+				MusicBeatState.switchState(new DAGardenState());
 			}
 		},
 		{

@@ -1,102 +1,83 @@
 package freeplay;
 
+import flixel.FlxG;
+
 class CharSongList
 {
-	static var loaded:Bool = false;
-
-	public static var data:Map<String, Array<String>> = [
+	static var initialized = false;
+	
+	public static final characters = [
+		"majin", 
+		"lord x", 
+		"tails doll", 
+		"sunky", 
+		"fleetway", 
+		"fatalerror", 
+		"chaotix", 
+		"yourself...", 
+		"curse", 
+		"starved",
+		"needlemouse", 
+		"hog", 
+		"sanic", 
+		"coldsteel", 
+		"sh tails"
+	];
+	
+	public static var charactersUnlocked:Array<String> = [];
+	
+	public static final songData:Map<String, Array<String>> = [
 		"majin" => ["endless", "endless-og"],
-		"lord x" => ["cycles", "fate"],
+		"lord x" => ["cycles"],
 		"tails doll" => ["sunshine", "soulless"],
-		"requital" => ["forestall-desire", "deception"],
+		"sunky" => ["milk"],
 		"fleetway" => ["chaos"],
 		"fatalerror" => ["fatality"],
-		"xterion" => ["substantial", "digitalized"],
-		"sl4sh" => ["b4cksl4sh"],
 		"chaotix" => ["my-horizon", "our-horizon"],
 		"yourself..." => ["yourself"],
 		"curse" => ["malediction"],
-		"satanos" => ["perdition"],
 		"starved" => ["prey", "fight-or-flight"],
-		"sonic has passed" => ["burning"],
 		"needlemouse" => ["round-a-bout"],
-		"hog" => ["manual-blast"],
-		"sunky" => ["milk"],
+		"hog" => ["hog", "manual-blast"],
 		"sanic" => ["too-fest"],
-		"coldsteel" => ["personel"],
+		"coldsteel" => ["personel", "personel-serious"],
+		"sh tails" => ["mania"]
 	];
-
-	public static var characters:Array<String> = [
-		"majin",
-		"lord x",
-		"tails doll",
-		"requital",
-		"fleetway",
-		"fatalerror",
-		"xterion",
-		"sl4sh",
-		"yourself...",
-		"chaotix",
-		"curse",
-		"satanos",
-		"starved",
-		"sonic has passed",
-		"needlemouse",
-		"hog",
-		"sunky",
-		"sanic",
-		"coldsteel",
-	];
-
-	public static var charactersUnlocked:Array<String> = [];
-
-	public static var songToFreeplayChar:Map<String, String> = [
-		"endless" => "majin",
-		"chaos" => "fleetway",
-		"fatality" => "fatalerror",
-		"b4cksl4sh" => "sl4sh",
-		"burning" => "sonic has passed",
-		"soulless" => "tails doll",
-		"malediction" => "curse",
-		"digitalized" => "xterion",
-		"manual-blast" => "hog",
-		"black-sun" => "faker",
-		"perdiction" => "satanos"
-	];
-
+	
 	public static function init()
 	{
-		if (!loaded)
-		{
-			loaded = true;
-
-			if (flixel.FlxG.save.data.charactersUnlocked != null)
-			{
-				var unlockedShit:Array<String> = flixel.FlxG.save.data.charactersUnlocked;
-
-				for (str in unlockedShit)
-				{
-					charactersUnlocked.push(str);
-				}
-			}
-			else
-			{
-				flixel.FlxG.save.data.charactersUnlocked = [];
-			}
-
-			trace(flixel.FlxG.save.data.charactersUnlocked);
-		}
+		if (initialized) return;
+		initialized = true;
+		
+		charactersUnlocked = FlxG.save.data.charactersUnlocked != null ? 
+			FlxG.save.data.charactersUnlocked.copy() : [];
 	}
 
-	public static function save()
-		for (str in charactersUnlocked)
-			if (!flixel.FlxG.save.data.charactersUnlocked.contains(str))
-				flixel.FlxG.save.data.charactersUnlocked.push(str);
-
-	public static function getSongsByChar(char:String)
-	{
-		if (data.exists(char))
-			return data.get(char);
-		return [];
+	public static function unlockSong(songId:String) {
+        if (FlxG.save.data.unlockedSongs == null) {
+            FlxG.save.data.unlockedSongs = [];
+        }
+        
+        if (!FlxG.save.data.unlockedSongs.contains(songId)) {
+            FlxG.save.data.unlockedSongs.push(songId);
+            save();
+        }
+    }
+    
+    public static function isSongUnlocked(songId:String):Bool {
+        if (FlxG.save.data.cheatUnlock) return true;
+        
+        if (FlxG.save.data.unlockedSongs != null) {
+            return FlxG.save.data.unlockedSongs.contains(songId);
+        }
+        return false;
+    }
+	
+	public static function save() {
+		FlxG.save.data.charactersUnlocked = charactersUnlocked.copy();
+	}
+	
+	public static function getSongsByChar(char:String):Array<String> {
+		return songData.exists(char) ? songData.get(char) : [];
 	}
 }

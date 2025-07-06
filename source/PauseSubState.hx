@@ -38,9 +38,11 @@ class PauseSubState extends MusicBeatSubstate
     var iconP1:HealthIcon;
     var iconP2:HealthIcon;
     var botplayText:FlxText;
-    var levelInfo:FlxText;
-    var levelDifficulty:FlxText;
     var blueballedTxt:FlxText;
+
+    // for preventing crashes
+    var activeTweens:Array<FlxTween> = [];
+    var activeTimers:Array<FlxTimer> = [];
 
 	public static var transCamera:FlxCamera;
 
@@ -54,9 +56,9 @@ class PauseSubState extends MusicBeatSubstate
 
 	public static var songName:String = '';
 
-    public function new(x:Float, y:Float)
+    override function create()
     {
-		super();
+		super.create();
 
         FlxG.sound.play(Paths.sound("pause"));
 
@@ -81,12 +83,13 @@ class PauseSubState extends MusicBeatSubstate
 
         createTimeBar();
 
-        new FlxTimer().start(0.2, function(_) {
+        var timer = new FlxTimer().start(0.2, function(_) {
             canInteract = true;
             changeSelection();
         });
+        activeTimers.push(timer);
 
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+        cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
     }
 
     function createTopPanel()
@@ -94,44 +97,25 @@ class PauseSubState extends MusicBeatSubstate
         topPanel = new FlxSprite(-1000, 0).loadGraphic(Paths.image("pauseStuff/pauseTop"));
         topPanel.antialiasing = ClientPrefs.globalAntialiasing;
         add(topPanel);
-        FlxTween.tween(topPanel, {x: 0}, 0.2, {ease: FlxEase.quadOut});
+        
+        var tween = FlxTween.tween(topPanel, {x: 0}, 0.2, {ease: FlxEase.quadOut});
+        activeTweens.push(tween);
     }
 
     function createBottomPanel()
     {
-        var panelX = PlayState.isFixedAspectRatio ? 589 - 230 : 589;
+        var panelX = PlayState.isFixedAspectRatio ? 589 - 300 : 589;
         bottomPanel = new FlxSprite(1280, 33).loadGraphic(Paths.image('pauseStuff/bottomPanel'));
         bottomPanel.antialiasing = ClientPrefs.globalAntialiasing;
         add(bottomPanel);
-        FlxTween.tween(bottomPanel, {x: panelX}, 0.2, {ease: FlxEase.quadOut});
+        
+        var tween = FlxTween.tween(bottomPanel, {x: panelX}, 0.2, {ease: FlxEase.quadOut});
+        activeTweens.push(tween);
     }
 
     function createInfoTexts()
     {
-        levelInfo = new FlxText(20, 15, 0, PlayState.SONG.song, 32);
-        levelInfo.scrollFactor.set();
-        levelInfo.setFormat(Paths.font("vcr.ttf"), 32);
-        levelInfo.updateHitbox();
-        levelInfo.x = FlxG.width - (levelInfo.width + 20);
-        levelInfo.alpha = 0;
-        //add(levelInfo);
-
-        levelDifficulty = new FlxText(20, 15 + 32, 0, CoolUtil.difficultyString(), 32);
-        levelDifficulty.scrollFactor.set();
-        levelDifficulty.setFormat(Paths.font('vcr.ttf'), 32);
-        levelDifficulty.updateHitbox();
-        levelDifficulty.x = FlxG.width - (levelDifficulty.width + 20);
-        levelDifficulty.alpha = 0;
-        //add(levelDifficulty);
-
-        blueballedTxt = new FlxText(20, 15 + 64, 0, "Blueballed: " + PlayState.deathCounter, 32);
-        blueballedTxt.scrollFactor.set();
-        blueballedTxt.setFormat(Paths.font('vcr.ttf'), 32);
-        blueballedTxt.updateHitbox();
-        blueballedTxt.x = FlxG.width - (blueballedTxt.width + 20);
-        blueballedTxt.alpha = 0;
-        add(blueballedTxt);
-
+        //personal func cuz yes
         botplayText = new FlxText(20, FlxG.height - 40, 0, "BOTPLAY", 32);
         botplayText.scrollFactor.set();
         botplayText.setFormat(Paths.font('vcr.ttf'), 32);
@@ -168,12 +152,12 @@ class PauseSubState extends MusicBeatSubstate
         button.loadGraphic(Paths.image("pauseStuff/blackbut"));
         button.x = text.x;
         button.antialiasing = ClientPrefs.globalAntialiasing;
-        button.y = text.y + text.height + 10; // Position button below text with 10px spacing
+        button.y = text.y + text.height + 10; //position button below text with 10px spacing
         button.ID = index;
         menuButtons.add(button);
         menuTexts.add(text);
         
-        FlxTween.tween(text, {
+        var tween = FlxTween.tween(text, {
             x: FlxG.width - MENU_START_X - 80 * index
         }, 0.2, {
             ease: FlxEase.quadOut,
@@ -181,6 +165,7 @@ class PauseSubState extends MusicBeatSubstate
                 button.x = text.x;
             }
         });
+        activeTweens.push(tween);
     }
 
     function createTimeBar()
@@ -218,12 +203,26 @@ class PauseSubState extends MusicBeatSubstate
 		iconP2 = new HealthIcon('face', false);
         iconP2.y = timeBar.y - 75;
 
+        if (PlayState.instance.healthBar.percent < 20)
+			iconP1.animation.curAnim.curFrame = 1;
+		else
+			iconP1.animation.curAnim.curFrame = 0;
+
+		if (PlayState.instance.healthBar.percent > 80)
+			iconP2.animation.curAnim.curFrame = 1;
+		else
+			iconP2.animation.curAnim.curFrame = 0;
+
         var percent = 100 - timeBar.percent;
-		FlxTween.tween(iconP1, {
+		var tween1 = FlxTween.tween(iconP1, {
 			x: timeBar.x + (timeBar.width * (FlxMath.remapToRange(percent, 0, 100, 100, 0) * 0.01) - (iconP2.width - 26)),
 			angle: 0
 		}, 0.8, {ease: FlxEase.circOut});
-        FlxTween.tween(timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
+        
+        var tween2 = FlxTween.tween(timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
+        
+        activeTweens.push(tween1);
+        activeTweens.push(tween2);
     }
 
     override function update(elapsed:Float)
@@ -238,8 +237,6 @@ class PauseSubState extends MusicBeatSubstate
         {
             handleInput();
         }
-
-        handleDebugCommands();
     }
 
     function handleInput()
@@ -249,45 +246,6 @@ class PauseSubState extends MusicBeatSubstate
         
         if (controls.ACCEPT) selectMenuItem();
     }
-
-    function handleDebugCommands()
-    {
-        if(FlxG.keys.justPressed.P) {
-            openSubState(new PracticeSubState());
-            FlxG.sound.play(Paths.sound("secretSound"));
-        }
-
-        if(FlxG.keys.justPressed.B) {
-            playRandomSound();
-            #if debug
-            toggleBotplay();
-            #else
-            Sys.exit(0);
-            #end
-        }
-    }
-
-    function playRandomSound()
-    {
-        switch (FlxG.random.int(1,7)) {
-            case 1: FlxG.sound.play(Paths.sound("FartHD"));
-            case 2: FlxG.sound.play(Paths.sound("vineboom"));
-            case 3: FlxG.sound.play(Paths.sound("secretSound"));
-            case 4: FlxG.sound.play(Paths.sound("Ring"));
-            case 5: FlxG.sound.play(Paths.sound("yay"));
-            case 6: FlxG.sound.play(Paths.sound("waowaowaowaowao"));
-            case 7: FlxG.sound.play(Paths.sound("switch"));
-        }
-    }
-
-    #if debug
-    function toggleBotplay()
-    {
-        PlayState.instance.cpuControlled = !PlayState.instance.cpuControlled;
-        PlayState.instance.practiceMode = true;
-        botplayText.visible = PlayState.instance.cpuControlled;
-    }
-    #end
 
     function changeSelection(change:Int = 0)
     {
@@ -312,17 +270,20 @@ class PauseSubState extends MusicBeatSubstate
         var targetY = FlxG.height / 2 + MENU_START_Y + MENU_SPACING_Y * button.ID;
         
         if(button.ID == curSelected) {
-            FlxTween.tween(button, {y: targetY - 20}, 0.2, {
+            var tween = FlxTween.tween(button, {y: targetY - 20}, 0.2, {
                 ease: FlxEase.quadOut,
                 onComplete: function(_) {
-                    FlxTween.tween(button, {y: button.y + 5}, 1, {
+                    var pingPong = FlxTween.tween(button, {y: button.y + 5}, 1, {
                         ease: FlxEase.quadInOut, 
                         type: FlxTween.PINGPONG
                     });
+                    activeTweens.push(pingPong);
                 }
             });
+            activeTweens.push(tween);
         } else {
-            FlxTween.tween(button, {y: targetY}, 0.2, {ease: FlxEase.quadOut});
+            var tween = FlxTween.tween(button, {y: targetY}, 0.2, {ease: FlxEase.quadOut});
+            activeTweens.push(tween);
         }
     }
 
@@ -332,17 +293,20 @@ class PauseSubState extends MusicBeatSubstate
         var targetY = FlxG.height / 2 + MENU_START_Y + MENU_SPACING_Y * text.ID + 5;
         
         if(text.ID == curSelected) {
-            FlxTween.tween(text, {y: targetY - 20}, 0.2, {
+            var tween = FlxTween.tween(text, {y: targetY - 20}, 0.2, {
                 ease: FlxEase.quadOut,
                 onComplete: function(_) {
-                    FlxTween.tween(text, {y: text.y + 5}, 1, {
+                    var pingPong = FlxTween.tween(text, {y: text.y + 5}, 1, {
                         ease: FlxEase.quadInOut, 
                         type: FlxTween.PINGPONG
                     });
+                    activeTweens.push(pingPong);
                 }
             });
+            activeTweens.push(tween);
         } else {
-            FlxTween.tween(text, {y: targetY}, 0.2, {ease: FlxEase.quadOut});
+            var tween = FlxTween.tween(text, {y: targetY}, 0.2, {ease: FlxEase.quadOut});
+            activeTweens.push(tween);
         }
     }
 
@@ -366,9 +330,10 @@ class PauseSubState extends MusicBeatSubstate
                 closeMenu();
                 
             case "Restart Song":
-                PlayState.instance.restartSong();
+                restartSong();
                 
             case "Exit to menu":
+                pauseMusic.stop();
                 exitToMenu();
         }
     }
@@ -381,30 +346,58 @@ class PauseSubState extends MusicBeatSubstate
         FlxG.sound.play(Paths.sound("unpause"));
 
         for (highlight in selectionHighlights) {
-            FlxTween.tween(highlight, {x: highlight.x + MENU_ANIM_OFFSET * (highlight.ID + 1)}, 0.2, {ease: FlxEase.quadOut});
+            var tween = FlxTween.tween(highlight, {x: highlight.x + MENU_ANIM_OFFSET * (highlight.ID + 1)}, 0.2, {ease: FlxEase.quadOut});
+            activeTweens.push(tween);
         }
 
         for (button in menuButtons) {
-            FlxTween.tween(button, {x: button.x + MENU_ANIM_OFFSET * (button.ID + 1)}, 0.2, {ease: FlxEase.quadOut});
+            var tween = FlxTween.tween(button, {x: button.x + MENU_ANIM_OFFSET * (button.ID + 1)}, 0.2, {ease: FlxEase.quadOut});
+            activeTweens.push(tween);
         }
         
         for (text in menuTexts) {
-            FlxTween.tween(text, {x: text.x + MENU_ANIM_OFFSET * (text.ID + 1)}, 0.2, {ease: FlxEase.quadOut});
+            var tween = FlxTween.tween(text, {x: text.x + MENU_ANIM_OFFSET * (text.ID + 1)}, 0.2, {ease: FlxEase.quadOut});
+            activeTweens.push(tween);
         }
 
-        FlxTween.tween(topPanel, {x: -1000}, 0.2, {ease: FlxEase.quadOut});
-        FlxTween.tween(bottomPanel, {x: 1280}, 0.2, {
-            ease: FlxEase.quadOut, 
+        var tween1 = FlxTween.tween(iconP1, {
+            x: -1000,
+            angle: 100
+        }, 0.8, {ease: FlxEase.circOut});
+        
+        var tween2 = FlxTween.tween(timeBar, {alpha: 0}, 0.2, {ease: FlxEase.circOut});
+        
+        var tween3 = FlxTween.tween(topPanel, {x: -1000}, 0.2, {ease: FlxEase.quadOut});
+        
+        var tween4 = FlxTween.tween(bottomPanel, {x: 1280}, 0.2, {
+            ease: FlxEase.quadOut,
             onComplete: function(_) {
                 close();
             }
         });
+        
+        activeTweens.push(tween1);
+        activeTweens.push(tween2);
+        activeTweens.push(tween3);
+        activeTweens.push(tween4);
+    }
 
-        FlxTween.tween(iconP1, {
-            x: -1000,
-            angle: 100
-        }, 0.8, {ease: FlxEase.circOut});
-        FlxTween.tween(timeBar, {alpha: 0}, 0.3, {ease: FlxEase.circOut});
+    public static function restartSong(noTrans:Bool = false)
+    {
+        PlayState.instance.paused = true;
+        FlxG.sound.music.volume = 0;
+        PlayState.instance.vocals.volume = 0;
+        PlayState.instance.opponentVocals.volume = 0;
+
+        if (noTrans)
+        {
+            FlxTransitionableState.skipNextTransOut = true;
+            FlxG.resetState();
+        }
+        else
+        {
+            MusicBeatState.resetState();
+        }
     }
 
     function exitToMenu()
@@ -432,13 +425,26 @@ class PauseSubState extends MusicBeatSubstate
 
     override function destroy()
     {
-        if(pauseMusic != null) {
-            pauseMusic.stop();
-            pauseMusic.destroy();
+        for (tween in activeTweens) {
+            if (tween != null && tween.active) {
+                tween.cancel();
+            }
         }
         
-        FlxTween.globalManager.clear();
-        FlxTimer.globalManager.clear();
+        for (timer in activeTimers) {
+            if (timer != null && timer.active) {
+                timer.cancel();
+            }
+        }
+        
+        activeTweens = [];
+        activeTimers = [];
+        
+        if (pauseMusic != null) {
+            pauseMusic.stop();
+            pauseMusic.destroy();
+            pauseMusic = null;
+        }
         
         super.destroy();
     }

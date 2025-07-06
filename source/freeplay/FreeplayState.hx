@@ -1,461 +1,384 @@
 package freeplay;
 
+#if desktop
+import Discord.DiscordClient;
+#end
 import flixel.util.FlxTimer;
 import flixel.input.gamepad.FlxGamepad;
-import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.addons.display.FlxGridOverlay;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import lime.utils.Assets;
 import flixel.sound.FlxSound;
 import sys.FileSystem;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.effects.FlxSkewedSprite;
-#if windows
-import Discord.DiscordClient;
-#end
 
 using StringTools;
 
-class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!!!
+class FreeplayState extends MusicBeatState
 {
-	var whiteshit:FlxSprite;
-
-	var curSelected:Int = 0;
-
-	var curSongSelected:Int = 0;
-
-	var textgrp:FlxTypedGroup<FlxText>;
-
-	var charArray:Array<String>;
-
-	var charUnlocked:Array<String>;
-
-	var boxgrp:SkewSpriteGroup;
-
+	// constants for changing visuals options easily
+	static final BOX_HEIGHT = 415;
+	static final BOX_SCALE_SELECTED = 0.58;
+	static final BOX_SCALE_UNSELECTED = 0.465;
+	static final TRANSITION_DURATION = 0.25;
+	static final SCROLL_SPEED = 1;
+	
+	// ui(aka visuals) stuff
+	var fadeSprite:FlxSprite;
+	var textGroup:FlxTypedGroup<FlxText>;
+	var boxGroup:SkewSpriteGroup;
 	var bg:FlxBackdrop;
-
 	var scrollingBg:FlxBackdrop;
-
-	var cdman:Bool = true;
-
-	var fuck:Int = 0;
-
-	var selecting:Bool = false;
-
 	var charText:FlxText;
-
 	var scoreText:FlxText;
+	
+	// game ahh backend stuff
+	var curCharSelected:Int = 0;
+	var curSongSelected:Int = 0;
+	var canControl:Bool = true;
+	var isSelectingSong:Bool = false;
+	var characters:Array<String>;
+	var unlockedChars:Array<String>;
 
-	private static var vocals:FlxSound = null;
+	// control things (hold scrolling)
+	var holdTime:Float = 0;
+    var holdDelay:Float = 0.5; // delay before autoscrolling
+    var holdInterval:Float = 0; // if someone wants to add interval between scrolling
+
+	// choosing save thing
+	public static var lastCharSelected:Int = 0;
+	public static var lastSongSelected:Int = 0;
+	public static var wasSelectingSong:Bool = false;
 
 	override function create()
 	{
-		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
+		Paths.clearStoredMemory();
+
+		CharSongList.init();
 		
-		charArray = CharSongList.characters;
+		characters = CharSongList.characters;
+		unlockedChars = CharSongList.charactersUnlocked;
 
-		charUnlocked = CharSongList.charactersUnlocked;
+		curCharSelected = lastCharSelected;
+		curSongSelected = lastSongSelected;
+		isSelectingSong = wasSelectingSong;
 
-		whiteshit = new FlxSprite().makeGraphic(1280, 720, FlxColor.WHITE);
-		whiteshit.alpha = 0;
+		createVisuals();
+		setupTexts();
 
-		bg = new FlxBackdrop(Paths.image('backgroundlool'));
-		bg.screenCenter();
-		bg.setGraphicSize(1280, 720);
-		bg.repeatAxes = X;
-		add(bg);
+		boxGroup.y = -curCharSelected * BOX_HEIGHT; // for the balance of the world
 
-		scrollingBg = new FlxBackdrop(Paths.image('fp stuff/sidebar'));
-		scrollingBg.repeatAxes = Y;
-		add(scrollingBg);
+		updateSelection();
 
-		textgrp = new FlxTypedGroup<FlxText>();
-
-		boxgrp = new SkewSpriteGroup();
-
-		for (i in 0...charArray.length)
-		{
-			if (charArray.contains(charArray[i])) // Hey so this is uneeded but it's here lol.
-			{
-				var box:FlxSkewedSprite = new FlxSkewedSprite(0, i * 415);
-				box.loadGraphic(Paths.image('FreeBox'));
-				boxgrp.add(box);
-				box.ID = i;
-				box.setGraphicSize(Std.int(box.width / 1.7));
-
-				FlxG.log.add('searching for ' + 'assets/images/fp stuff/arts/' + charArray[i].toLowerCase() + '.png');
-
-				if (charUnlocked.contains(charArray[i]))
-				{
-					if (FileSystem.exists('assets/images/fp stuff/arts/' + charArray[i].toLowerCase() + '.png'))
-					{
-						var char:FlxSkewedSprite = new FlxSkewedSprite(0, i * 415);
-						char.loadGraphic(Paths.image('fp stuff/arts/' + charArray[i].toLowerCase()));
-						boxgrp.add(char);
-						char.ID = i;
-						char.setGraphicSize(Std.int(box.width / 1.7));
-					}
-					else
-					{
-						var char:FlxSkewedSprite = new FlxSkewedSprite(0, i * 415);
-						char.loadGraphic(Paths.image('fp stuff/arts/placeholder'));
-						boxgrp.add(char);
-						char.ID = i;
-						char.setGraphicSize(Std.int(box.width / 1.7));
-					}
-				} else {
-					var char:FlxSkewedSprite = new FlxSkewedSprite(0, i * 415);
-					char.loadGraphic(Paths.image('fp stuff/arts/locked'));
-					boxgrp.add(char);
-					char.ID = i;
-					char.setGraphicSize(Std.int(box.width / 1.7));
-				}
-			}
+		if (isSelectingSong) {
+			highlightSelectedSong();
 		}
-
-		boxgrp.x = -335;
-
-		var uhhdumbassline:FlxSprite = new FlxSprite(300).makeGraphic(10, 720, FlxColor.BLACK);
-		add(uhhdumbassline);
-
-		add(boxgrp);
-		add(textgrp);
-
-		scoreText = new FlxText(30, 105, FlxG.width, "");
-		scoreText.setFormat("Sonic CD Menu Font Regular", 18, FlxColor.WHITE, CENTER);
-		scoreText.y -= 36;
-		scoreText.x -= 20;
-		add(scoreText);
-
-		if (charUnlocked.contains(charArray[0]))
-			charText = new FlxText(30, 10, FlxG.width, "Majin");
-		else
-			charText = new FlxText(30, 10, FlxG.width, "???");
-		charText.setFormat("Sonic CD Menu Font Regular", 36, FlxColor.WHITE, CENTER);
-		charText.y -= 10;
-		charText.x -= 23;
-		add(charText);
-
-		////// LOADING SHIT FOR THE BEGINNING ////////
-		boxgrp.forEach(function(sprite:FlxSkewedSprite)
-		{
-			if (sprite.ID == curSelected - 1 || sprite.ID == curSelected + 1)
-			{
-				var diff = curSelected - sprite.ID;
-				trace(diff, sprite.ID, curSelected);
-				FlxTween.tween(sprite, {alpha: 0.5}, 0.25);
-				FlxTween.tween(sprite.scale, {x: 0.465, y: 0.465}, 0.25, {ease: FlxEase.expoOut});
-				FlxTween.tween(sprite.skew, {x: 0, y: 0}, 0.25, {ease: FlxEase.expoOut});
-			}
-			else
-			{
-				FlxTween.tween(sprite, {alpha: 1}, 0.25);
-				FlxTween.tween(sprite.scale, {x: 0.58, y: 0.58}, 0.25, {ease: FlxEase.expoOut});
-				FlxTween.tween(sprite.skew, {x: 0, y: 0}, 0.25, {ease: FlxEase.expoOut});
-			}
-		});
-		for (i in 0...CharSongList.getSongsByChar(charArray[curSelected]).length)
-		{
-			var text:FlxText;
-			if (charUnlocked.contains(charArray[curSelected]))
-				text = new FlxText(350,
-					FlxG.height / 2 - 30 * CharSongList.getSongsByChar(charArray[curSelected])
-					.length + i * 30 * CharSongList.getSongsByChar(charArray[curSelected]).length,
-					FlxG.width, StringTools.replace(CharSongList.getSongsByChar(charArray[curSelected])[i], "-", " "));
-			else
-				text = new FlxText(350,
-					FlxG.height / 2 - 30 * CharSongList.getSongsByChar(charArray[curSelected])
-					.length + i * 30 * CharSongList.getSongsByChar(charArray[curSelected]).length,
-					FlxG.width, "???");
-			text.setFormat("Sonic CD Menu Font Regular", 34, 0xFFFFFFFF, CENTER);
-			text.ID = i;
-			textgrp.add(text);
-		}
-
-		#if windows
-		// Updating Discord Rich Presence
-		DiscordClient.changePresence("In the Freeplay Menu", null);
+		
+		#if desktop
+		DiscordClient.changePresence("In Freeplay Menu", null);
 		#end
-
-		add(whiteshit);
 
 		super.create();
 	}
 
+	function createVisuals()
+	{
+		bg = new FlxBackdrop(Paths.image('backgroundlool'));
+		bg.screenCenter();
+		bg.scale.set(0.35, 0.35);
+		bg.repeatAxes = X;
+		add(bg);
+		
+		scrollingBg = new FlxBackdrop(Paths.image('fp stuff/sidebar'));
+		add(scrollingBg);
+		
+		add(new FlxSprite(300).makeGraphic(10, 720, FlxColor.BLACK));
+		
+		boxGroup = new SkewSpriteGroup();
+		boxGroup.x = -335;
+		add(boxGroup);
+		
+		for (i in 0...characters.length) 
+			createCharacterBox(i);
+		
+		textGroup = new FlxTypedGroup<FlxText>();
+		add(textGroup);
+		
+		fadeSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
+		fadeSprite.alpha = 0;
+		add(fadeSprite);
+	}
+	
+	function createCharacterBox(index:Int)
+	{
+		// Cocks
+		var box = new FlxSkewedSprite(0, index * BOX_HEIGHT);
+		box.loadGraphic(Paths.image('FreeBox'));
+		box.ID = index;
+		box.scale.set(BOX_SCALE_UNSELECTED, BOX_SCALE_UNSELECTED);
+		box.antialiasing = ClientPrefs.globalAntialiasing;
+		boxGroup.add(box);
+		
+		// Character song art
+		var art = new FlxSkewedSprite(0, index * BOX_HEIGHT);
+		art.ID = index;
+		art.antialiasing = ClientPrefs.globalAntialiasing;
+		art.scale.set(BOX_SCALE_UNSELECTED, BOX_SCALE_UNSELECTED);
+		
+		if (unlockedChars.contains(characters[index])) {
+			var artPath = 'fp stuff/arts/${characters[index].toLowerCase()}';
+			art.loadGraphic(FileSystem.exists('assets/images/$artPath') ? 
+				Paths.image(artPath) : Paths.image('fp stuff/arts/placeholder'));
+		} else {
+			art.loadGraphic(Paths.image('fp stuff/arts/locked'));
+		}
+		
+		boxGroup.add(art);
+	}
+
+	function isSongUnlocked(songId:String):Bool
+	{
+		if (!unlockedChars.contains(characters[curCharSelected])) 
+			return false;
+		
+		if (FlxG.save.data.unlockedSongs != null && 
+			FlxG.save.data.unlockedSongs.contains(songId)) 
+			return true;
+			
+		return false;
+	}
+
+	function setupTexts()
+	{
+		scoreText = new FlxText(10, 69, FlxG.width, "");
+		scoreText.setFormat("Sonic CD Menu Font Regular", 18, FlxColor.WHITE, CENTER);
+		add(scoreText);
+		
+		charText = new FlxText(7, 0, FlxG.width, "???");
+		charText.setFormat("Sonic CD Menu Font Regular", 36, FlxColor.WHITE, CENTER);
+		add(charText);
+		
+		refreshSongList();
+	}
+	
+	function refreshSongList()
+	{
+		textGroup.clear();
+		
+		var songs = CharSongList.getSongsByChar(characters[curCharSelected]);
+		var startY = FlxG.height / 2 - (30 * songs.length) / 2;
+		
+		for (i in 0...songs.length) {
+			var isUnlocked = isSongUnlocked(songs[i]);
+			var songName = isUnlocked ? songs[i].replace("-", " ") : "???";
+			var textColor = isUnlocked ? FlxColor.WHITE : FlxColor.GRAY;
+				
+			var text = new FlxText(350, startY + (i * 30), FlxG.width, songName);
+			text.setFormat("Sonic CD Menu Font Regular", 34, textColor, CENTER);
+			text.ID = i;
+			textGroup.add(text);
+		}
+	}
+
 	override function update(elapsed:Float)
 	{
-		scrollingBg.y -= 1;
-		bg.x += 1;
-
 		super.update(elapsed);
-
+		
+		// for bg infinity scrolling anim
+		scrollingBg.y -= SCROLL_SPEED;
+		bg.x -= SCROLL_SPEED / 2;
+		
+		if (canControl) handleInput(elapsed);
+	}
+	
+	function handleInput(elapsed:Float)
+	{
 		var upP = controls.UI_UP_P;
-		var downP = controls.UI_DOWN_P;
-		var accepted = controls.ACCEPT;
+        var downP = controls.UI_DOWN_P;
+        var up = controls.UI_UP;
+        var down = controls.UI_DOWN;
+		var back = controls.BACK;
+        var accepted = controls.ACCEPT;
 
-		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
-
-		if (gamepad != null)
-		{
-			if (gamepad.justPressed.DPAD_UP)
-			{
-				changeSelection(-1);
-			}
-			if (gamepad.justPressed.DPAD_DOWN)
-			{
-				changeSelection(1);
-			}
-		}
-
-		if (cdman)
-		{
-			if (upP)
-			{
-				changeSelection(-1);
-			}
-			if (downP)
-			{
-				changeSelection(1);
-			}
-		}
-
-		if (controls.BACK)
-		{
+		if (upP) changeSelection(-1);
+		if (downP) changeSelection(1);
+		
+		if (back) {
+			saveSelectionState();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			if (!selecting)
-				MusicBeatState.switchState(new MainMenuState());
-			else
-			{
-				scoreText.text = "";
-				curSongSelected = 0;
-				selecting = false;
-				textgrp.forEach(function(text:FlxText)
-				{
-					FlxTween.cancelTweensOf(text);
+			if (isSelectingSong) exitSongSelection();
+			else MusicBeatState.switchState(new MainMenuState());
+		}
+		
+		if (accepted) {
+			if (isSelectingSong) selectSong();
+			else enterSongSelection();
+		}
+
+		if (!isSelectingSong && (up || down))
+        {
+            holdTime += elapsed;
+            
+            if (holdTime > holdDelay)
+            {
+                var change:Int = 0;
+                if (up) change = -1;
+                if (down) change = 1;
+                
+                if (holdTime > holdDelay + holdInterval)
+                {
+                    changeSelection(change);
+                    holdTime = holdDelay;
+                }
+            }
+        }
+        else
+        {
+            holdTime = 0;
+        }
+	}
+	
+	function changeSelection(change:Int)
+	{
+		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		
+		if (isSelectingSong) {
+			curSongSelected = (curSongSelected + change + 
+				CharSongList.getSongsByChar(characters[curCharSelected]).length) % 
+				CharSongList.getSongsByChar(characters[curCharSelected]).length;
+			highlightSelectedSong();
+		} else {
+			canControl = false;
+			var prevSelected = curCharSelected;
+			
+			curCharSelected = FlxMath.wrap(curCharSelected + change, 0, characters.length - 1);
+			
+			var distance = change;
+			
+			if ((prevSelected == 0 && change < 0) || 
+				(prevSelected == characters.length - 1 && change > 0)) {
+				distance = change > 0 ? -characters.length + 1 : characters.length - 1;
+			}
+			
+			FlxTween.tween(boxGroup, {
+				y: -curCharSelected * BOX_HEIGHT
+			}, TRANSITION_DURATION, {
+				ease: FlxEase.expoOut,
+				onComplete: function(_) {
+					canControl = true;
+				}
+			});
+
+			updateSelection();
+		}
+
+		saveSelectionState();
+	}
+	
+	function updateSelection()
+	{
+		// update character info (on above)
+		charText.text = unlockedChars.contains(characters[curCharSelected]) ? 
+			characters[curCharSelected] : "???";
+		
+		// cocks appearing code
+		boxGroup.forEach(sprite -> {
+			final isSelected = sprite.ID == curCharSelected;
+			FlxTween.tween(sprite, {alpha: isSelected ? 1 : 0.5}, TRANSITION_DURATION);
+			FlxTween.tween(sprite.scale, {x: isSelected ? BOX_SCALE_SELECTED : BOX_SCALE_UNSELECTED}, 
+				TRANSITION_DURATION, {ease: FlxEase.expoOut});
+		});
+		
+		refreshSongList();
+	}
+
+	function saveSelectionState()
+	{
+		lastCharSelected = curCharSelected;
+		lastSongSelected = curSongSelected;
+		wasSelectingSong = isSelectingSong;
+	}
+	
+	function enterSongSelection()
+	{
+		isSelectingSong = true;
+		saveSelectionState();
+		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		highlightSelectedSong();
+	}
+	
+	function exitSongSelection()
+	{
+		isSelectingSong = false;
+		saveSelectionState();
+		scoreText.text = "";
+		textGroup.forEach(text -> {
+			FlxTween.cancelTweensOf(text);
+			text.alpha = 1;
+		});
+	}
+	
+	function highlightSelectedSong()
+	{
+		textGroup.forEach(text -> {
+			FlxTween.cancelTweensOf(text);
+			
+			if (text.ID == curSongSelected) {
+				var songs = CharSongList.getSongsByChar(characters[curCharSelected]);
+				var songId = songs[text.ID];
+				
+				if (isSongUnlocked(songId)) {
+					FlxTween.tween(text, {alpha: 0.5}, 0.5, {type: PINGPONG});
+					scoreText.text = "Score: " + Highscore.getScore(songId, 2);
+				} else {
 					text.alpha = 1;
-				});
-			}
-		}
-
-		if (accepted && cdman && selecting)
-		{
-			if (charUnlocked.contains(charArray[curSelected]))
-			{
-				cdman = false;
-
-				var songArray:Array<String> = CharSongList.getSongsByChar(charArray[curSelected]);
-
-				PlayState.SONG = Song.loadFromJson(songArray[curSongSelected].toLowerCase(), songArray[curSongSelected].toLowerCase());
-				PlayState.isStoryMode = false;
-				PlayState.isEncoreMode = false;
-				PlayState.isSoundTest = false;
-				PlayState.storyDifficulty = 2;
-				PlayState.storyWeek = 1;
-				FlxG.sound.play(Paths.sound('confirmMenu'));
-
-				PlayStateChangeables.nocheese = false;
-				switch (songArray[curSongSelected])
-				{
-					case 'sunshine':
-						CustomShapeTransition.shape = "oval";
-						LoadingState.loadAndSwitchState(new PlayState());
-					case 'cycles':
-						CustomShapeTransition.shape = "X";
-						LoadingState.loadAndSwitchState(new PlayState());
-					default:
-						FlxTween.tween(whiteshit, {alpha: 1}, 0.4);
-						FlxTransitionableState.skipNextTransIn = true;
-						FlxTransitionableState.skipNextTransOut = true;
-						new FlxTimer().start(0.8, function(tmr:FlxTimer)
-						{
-							LoadingState.loadAndSwitchState(new PlayState());
-						});
+					scoreText.text = "Locked";
 				}
+			} else {
+				text.alpha = 1;
 			}
-			else
-			{
-				cdman = false;
-				FlxG.sound.play(Paths.sound('deniedMOMENT'), 1, false, null, false, function()
-				{
-					cdman = true;
-				});
-			}
-		}
-		if (accepted && cdman && !selecting)
-		{
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-			selecting = true;
-			if (textgrp.members != null)
-			{
-				textgrp.forEach(function(text:FlxText)
-				{
-					FlxTween.cancelTweensOf(text);
-					text.alpha = 1;
-					if (text.ID == curSongSelected)
-					{
-						scoreText.text = "Score: " + Highscore.getScore(CharSongList.getSongsByChar(charArray[curSelected])[curSongSelected], 2);
-						FlxTween.tween(text, {alpha: 0.5}, 0.5, {ease: FlxEase.expoOut, type: FlxTween.PINGPONG});
-					}
-				});
-			}
-		}
+		});
 	}
-
-	public static function destroyFreeplayVocals()
+	
+	function selectSong()
 	{
-		if (vocals != null)
-		{
-			vocals.stop();
-			vocals.destroy();
-		}
-	}
-
-	function changeSelection(change:Int = 0)
-	{
-		#if !switch
-		// NGio.logEvent('Fresh');
-		#end
-
-		if (!selecting)
-		{
-			if (change == 1 && curSelected != charArray.length - 1)
-			{
-				cdman = false;
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				FlxTween.tween(boxgrp, {y: boxgrp.y - 415}, 0.25, {
-					ease: FlxEase.expoOut,
-					onComplete: function(sus:FlxTween)
-					{
-						cdman = true;
-					}
-				});
-			}
-			else if (change == -1 && curSelected != 0)
-			{
-				cdman = false;
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				FlxTween.tween(boxgrp, {y: boxgrp.y + 415}, 0.25, {
-					ease: FlxEase.expoOut,
-					onComplete: function(sus:FlxTween)
-					{
-						cdman = true;
-					}
-				});
-			}
-			if ((change == 1 && curSelected != charArray.length - 1) || (change == -1 && curSelected != 0)) // This is a.
-			{
-				if (textgrp.members != null)
-				{
-					textgrp.forEach(function(text:FlxText)
-					{
-						text.destroy();
-					});
-				}
-				curSelected = curSelected + change;
-				boxgrp.forEach(function(sprite:FlxSkewedSprite)
-				{
-					if (sprite.ID == curSelected)
-					{
-						FlxTween.tween(sprite, {alpha: 1}, 0.25);
-						FlxTween.tween(sprite.scale, {x: 0.58, y: 0.58}, 0.25, {ease: FlxEase.expoOut});
-					}
-					else
-					{
-						FlxTween.tween(sprite, {alpha: 0.5}, 0.25);
-						FlxTween.tween(sprite.scale, {x: 0.465, y: 0.465}, 0.25, {ease: FlxEase.expoOut});
-					}
-				});
-				for (i in 0...CharSongList.getSongsByChar(charArray[curSelected]).length)
-				{
-					var text:FlxText;
-					if (charUnlocked.contains(charArray[curSelected]))
-						text = new FlxText(350,
-							FlxG.height / 2 - 30 * CharSongList.getSongsByChar(charArray[curSelected])
-							.length + i * 30 * CharSongList.getSongsByChar(charArray[curSelected]).length,
-							FlxG.width, StringTools.replace(CharSongList.getSongsByChar(charArray[curSelected])[i], "-", " "));
-					else
-						text = new FlxText(350,
-							FlxG.height / 2 - 30 * CharSongList.getSongsByChar(charArray[curSelected])
-							.length + i * 30 * CharSongList.getSongsByChar(charArray[curSelected]).length,
-							FlxG.width, "???");
-					text.setFormat("Sonic CD Menu Font Regular", 34, 0xFFFFFFFF, CENTER);
-					text.ID = i;
-					textgrp.add(text);
-				}
-				if (charUnlocked.contains(charArray[curSelected]))
-					charText.text = charArray[curSelected];
-				else
-					charText.text = '???';
-				boxgrp.forEach(function(thing:FlxSkewedSprite)
-				{
-					if (thing.ID == curSelected && thing.toString() == "char")
-					{
-						switch (charArray[curSelected])
-						{
-							case "hog":
-								if (curSongSelected == 1)
-									thing.loadGraphic(Paths.image('fp stuff/arts/scorched'));
-								else
-									thing.loadGraphic(Paths.image('fp stuff/arts/hog'));
-							default:
-								thing.loadGraphic(Paths.image('fp stuff/arts/' + charArray[curSelected]));
-						}
-					}
-				});
-			}
-		}
-		else
-		{
-			var songArray:Array<String> = CharSongList.getSongsByChar(charArray[curSelected]);
-			var nextSelected = curSongSelected + change;
-			if (nextSelected < 0)
-				nextSelected = songArray.length - 1;
-			if (nextSelected >= songArray.length)
-				nextSelected = 0;
-			if (curSongSelected != nextSelected)
-			{
-				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-				curSongSelected += change;
-				if (textgrp.members != null)
-				{
-					textgrp.forEach(function(text:FlxText)
-					{
-						FlxTween.cancelTweensOf(text);
-						text.alpha = 1;
-						if (text.ID == curSongSelected)
-						{
-							scoreText.text = "Score: " + Highscore.getScore(songArray[curSongSelected], 2);
-							FlxTween.tween(text, {alpha: 0.5}, 0.5, {ease: FlxEase.expoOut, type: FlxTween.PINGPONG});
-						}
-					});
-				}
-			}
+		var songs = CharSongList.getSongsByChar(characters[curCharSelected]);
+		var songId = songs[curSongSelected];
+		
+		if (!isSongUnlocked(songId)) {
+			canControl = false;
+			FlxG.sound.play(Paths.sound('deniedMOMENT'), 1, false, () -> canControl = true);
+			return;
 		}
 
-		// NGio.logEvent('Fresh');
-	}
-}
-
-class SongMetadata
-{
-	public var songName:String = "";
-	public var week:Int = 0;
-	public var songCharacter:String = "";
-
-	public function new(song:String, week:Int, songCharacter:String)
-	{
-		this.songName = song;
-		this.week = week;
-		this.songCharacter = songCharacter;
+		saveSelectionState();
+		
+		canControl = false;
+		FlxG.sound.play(Paths.sound('confirmMenu'));
+		
+		final song = CharSongList.getSongsByChar(characters[curCharSelected])[curSongSelected].toLowerCase();
+		PlayState.SONG = Song.loadFromJson(song, song);
+		
+		PlayState.isStoryMode = false;
+		PlayState.storyDifficulty = 1;
+		
+		// custom transitions ass vars
+		switch (song) {
+			case 'sunshine': CustomShapeTransition.shape = "oval";
+			case 'cycles': CustomShapeTransition.shape = "X";
+			default:
+				FlxTween.tween(fadeSprite, {alpha: 1}, 0.4);
+				new FlxTimer().start(0.8, _ -> LoadingState.loadAndSwitchState(new PlayState()));
+				return;
+		}
+		
+		LoadingState.loadAndSwitchState(new PlayState());
 	}
 }

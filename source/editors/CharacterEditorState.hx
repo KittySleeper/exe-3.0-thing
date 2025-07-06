@@ -75,7 +75,6 @@ class CharacterEditorState extends MusicBeatState
 
 	private var camEditor:FlxCamera;
 	private var camHUD:FlxCamera;
-	private var camMenu:FlxCamera;
 
 	var grid:FlxSprite;
 	var gridVisible:Bool = false;
@@ -98,17 +97,13 @@ class CharacterEditorState extends MusicBeatState
 
 	override function create()
 	{
+		if(ClientPrefs.cacheOnGPU) Paths.clearStoredMemory();
 		//FlxG.sound.playMusic(Paths.music('breakfast'), 0.5);
-		camEditor = new FlxCamera();
+		camEditor = initPsychCamera();
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
-		camMenu = new FlxCamera();
-		camMenu.bgColor.alpha = 0;
 
-		FlxG.cameras.reset(camEditor);
 		FlxG.cameras.add(camHUD, false);
-		FlxG.cameras.add(camMenu, false);
-		FlxG.cameras.setDefaultDrawTarget(camEditor, true);
 
 		grid = FlxGridOverlay.create(10, 10, FlxG.width * 4, FlxG.height * 4, true, 0x22FFFFFF, 0x55FFFFFF);
 		grid.screenCenter();
@@ -135,7 +130,7 @@ class CharacterEditorState extends MusicBeatState
 			onPixelBG = !onPixelBG;
 			reloadBGs();
 		});
-		changeBGbutton.cameras = [camMenu];
+		changeBGbutton.cameras = [camHUD];
 
 		loadChar(!daAnim.startsWith('bf'), false);
 
@@ -202,7 +197,7 @@ class CharacterEditorState extends MusicBeatState
 		];
 
 		UI_box = new FlxUITabMenu(null, tabs, true);
-		UI_box.cameras = [camMenu];
+		UI_box.cameras = [camHUD];
 
 		UI_box.resize(250, 120);
 		UI_box.x = FlxG.width - 275;
@@ -214,7 +209,7 @@ class CharacterEditorState extends MusicBeatState
 			{name: 'Animations', label: 'Animations'},
 		];
 		UI_characterbox = new FlxUITabMenu(null, tabs, true);
-		UI_characterbox.cameras = [camMenu];
+		UI_characterbox.cameras = [camHUD];
 
 		UI_characterbox.resize(350, 280);
 		UI_characterbox.x = UI_box.x - 100;
@@ -295,10 +290,10 @@ class CharacterEditorState extends MusicBeatState
 			bgTrees.updateHitbox();
 			changeBGbutton.text = "Regular BG";
 		} else {
-			var bg:BGSprite = new BGSprite('stageback', -600 + OFFSET_X - playerXDifference, -300, 0.9, 0.9);
+			var bg:BGSprite = new BGSprite('dadStage/stageback', -600 + OFFSET_X - playerXDifference, -300, 0.9, 0.9);
 			bgLayer.add(bg);
 
-			var stageFront:BGSprite = new BGSprite('stagefront', -650 + OFFSET_X - playerXDifference, 500, 0.9, 0.9);
+			var stageFront:BGSprite = new BGSprite('dadStage/stagefront', -650 + OFFSET_X - playerXDifference, 500, 0.9, 0.9);
 			stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
 			stageFront.updateHitbox();
 			bgLayer.add(stageFront);
@@ -1415,7 +1410,7 @@ class CharacterEditorState extends MusicBeatState
 				}
 			}
 		}
-		//camMenu.zoom = FlxG.camera.zoom;
+		//camHUD.zoom = FlxG.camera.zoom;
 		ghostChar.setPosition(char.x, char.y);
 		super.update(elapsed);
 	}

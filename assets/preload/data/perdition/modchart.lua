@@ -1,4 +1,4 @@
-function define(name,def)
+function define(name, def)
     modMgr:define(name)
     modMgr:set(name,def)
 end

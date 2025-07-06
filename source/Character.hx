@@ -47,46 +47,44 @@ typedef AnimArray = {
 
 class Character extends FlxSprite
 {
-	public var mostRecentRow:Int = 0; // for ghost anims n shit
-	public var animGhosts:Array<FlxSprite> = [];
+	// Восстановленные поля
+	public var voicelining:Bool = false;
+	public var mostRecentRow:Int = 0;
 	public var ghostIdx:Int = 0;
 	public var ghostAnim:String = '';
-	public var ghostTweens:Array<FlxTween> = [];
-
-	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
-
-	public var isPlayer:Bool = false;
-	public var curCharacter:String = DEFAULT_CHARACTER;
-
-	public var colorTween:FlxTween;
-	public var holdTimer:Float = 0;
-	public var heyTimer:Float = 0;
-	public var specialAnim:Bool = false;
-	public var animationNotes:Array<Dynamic> = [];
-	public var stunned:Bool = false;
-	public var singDuration:Float = 4; //Multiplier of how long a character holds the sing pose
-	public var idleSuffix:String = '';
-	public var danceIdle:Bool = false; //Character use "danceLeft" and "danceRight" instead of "idle"
 	public var skipDance:Bool = false;
-
-	public var healthIcon:String = 'face';
-	public var animationsArray:Array<AnimArray> = [];
-
-	public var positionArray:Array<Float> = [0, 0];
-	public var cameraPosition:Array<Float> = [0, 0];
-
-	public var hasMissAnimations:Bool = false;
+	public var idleSuffix:String = '';
+	public var danceIdle:Bool = false;
+	public var stunned:Bool = false;
+	public var danced:Bool = false;
+	public var danceEveryNumBeats:Int = 2;
+	public var singDuration:Float = 4;
+	public var healthColorArray:Array<Int> = [255, 0, 0];
 	public var vocalsFile:String = '';
-
-	//Used on Character Editor
 	public var imageFile:String = '';
 	public var jsonScale:Float = 1;
-	public var noAntialiasing:Bool = false;
 	public var originalFlipX:Bool = false;
-	public var healthColorArray:Array<Int> = [255, 0, 0];
+	public var animationsArray:Array<AnimArray> = [];
+	public var animationNotes:Array<Dynamic> = [];
+	public var animTimer:Float = 0;
+	public var heyTimer:Float = 0;
+	public var holdTimer:Float = 0;
+	public var specialAnim:Bool = false;
+	public var noAntialiasing:Bool = false;
 
-	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
+	public var animGhosts:Array<FlxSprite> = [];
+	public var ghostTweens:Array<FlxTween> = [];
+	public var animOffsets:Map<String, Array<Dynamic>> = [];
+	public var isPlayer:Bool = false;
+	public var curCharacter:String = DEFAULT_CHARACTER;
+	public var healthIcon:String = 'face';
+	public var positionArray:Array<Float> = [0, 0];
+	public var cameraPosition:Array<Float> = [0, 0];
+	public var hasMissAnimations:Bool = false;
+
+	public static var DEFAULT_CHARACTER:String = 'bf';
+
 	public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false, ?isChibiChar:Bool = false)
 	{
 		super(x, y);
@@ -97,6 +95,7 @@ class Character extends FlxSprite
 			ghost.antialiasing = ClientPrefs.globalAntialiasing;
 			ghost.alpha = 0.6;
 			animGhosts.push(ghost);
+			ghostTweens.push(null);
 		}
 
 		#if (haxe >= "4.0.0")
@@ -104,16 +103,17 @@ class Character extends FlxSprite
 		#else
 		animOffsets = new Map<String, Array<Dynamic>>();
 		#end
+		
 		curCharacter = character;
 		this.isPlayer = isPlayer;
 		antialiasing = ClientPrefs.globalAntialiasing;
 		var library:String = null;
+		
 		switch (curCharacter)
 		{
-			//case 'your character name in case you want to hardcode them instead':
-
 			default:
 				var characterPath:String = 'characters/' + curCharacter + '.json';
+				scale.set(1, 1);
 
 				#if MODS_ALLOWED
 				var path:String = Paths.modFolders(characterPath);
@@ -127,7 +127,7 @@ class Character extends FlxSprite
 				if (!Assets.exists(path))
 				#end
 				{
-					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
+					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER + '.json');
 				}
 
 				#if MODS_ALLOWED
@@ -138,15 +138,10 @@ class Character extends FlxSprite
 
 				var json:CharacterFile = cast Json.parse(rawJson);
 				var spriteType = "sparrow";
-				//sparrow
-				//packer
-				//texture
+				
 				#if MODS_ALLOWED
 				var modTxtToFind:String = Paths.modsTxt(json.image);
 				var txtToFind:String = Paths.getPath('images/' + json.image + '.txt', TEXT);
-				
-				//var modTextureToFind:String = Paths.modFolders("images/"+json.image);
-				//var textureToFind:String = Paths.getPath('images/' + json.image, new AssetType();
 				
 				if (FileSystem.exists(modTxtToFind) || FileSystem.exists(txtToFind) || Assets.exists(txtToFind))
 				#else
@@ -160,9 +155,6 @@ class Character extends FlxSprite
 				var modAnimToFind:String = Paths.modFolders('images/' + json.image + '/Animation.json');
 				var animToFind:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT);
 				
-				//var modTextureToFind:String = Paths.modFolders("images/"+json.image);
-				//var textureToFind:String = Paths.getPath('images/' + json.image, new AssetType();
-				
 				if (FileSystem.exists(modAnimToFind) || FileSystem.exists(animToFind) || Assets.exists(animToFind))
 				#else
 				if (Assets.exists(Paths.getPath('images/' + json.image + '/Animation.json', TEXT)))
@@ -172,40 +164,39 @@ class Character extends FlxSprite
 				}
 
 				switch (spriteType){
-					
 					case "packer":
 						frames = Paths.getPackerAtlas(json.image);
-					
 					case "sparrow":
 						frames = Paths.getSparrowAtlas(json.image);
-					
 					case "texture":
 						frames = AtlasFrameMaker.construct(json.image);
 				}
+				
 				imageFile = json.image;
-
+				jsonScale = json.scale;
+				singDuration = json.sing_duration;
+				vocalsFile = json.vocals_file != null ? json.vocals_file : '';
+				noAntialiasing = json.no_antialiasing;
+				
 				if(json.scale != 1) {
-					jsonScale = json.scale;
 					setGraphicSize(Std.int(width * jsonScale));
 					updateHitbox();
 				}
 
 				positionArray = json.position;
-				vocalsFile = json.vocals_file != null ? json.vocals_file : '';
 				cameraPosition = json.camera_position;
-
 				healthIcon = json.healthicon;
-				singDuration = json.sing_duration;
 				flipX = !!json.flip_x;
-				if(json.no_antialiasing) {
+				originalFlipX = flipX;
+				
+				if(noAntialiasing) {
 					antialiasing = false;
-					noAntialiasing = true;
 				}
 
-				if(json.healthbar_colors != null && json.healthbar_colors.length > 2)
+				if(json.healthbar_colors != null && json.healthbar_colors.length > 2) {
 					healthColorArray = json.healthbar_colors;
+				}
 
-				antialiasing = !noAntialiasing;
 				if(!ClientPrefs.globalAntialiasing) antialiasing = false;
 
 				animationsArray = json.animations;
@@ -214,7 +205,7 @@ class Character extends FlxSprite
 						var animAnim:String = '' + anim.anim;
 						var animName:String = '' + anim.name;
 						var animFps:Int = anim.fps;
-						var animLoop:Bool = !!anim.loop; //Bruh
+						var animLoop:Bool = !!anim.loop;
 						var animIndices:Array<Int> = anim.indices;
 						if(animIndices != null && animIndices.length > 0) {
 							animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
@@ -243,38 +234,16 @@ class Character extends FlxSprite
 						animOffsets[anim][1] *= scale.y;
 					}
 				}
-				//trace('Loaded file to character ' + curCharacter);
 		}
-		originalFlipX = flipX;
-
-		if(animOffsets.exists('singLEFTmiss') || animOffsets.exists('singDOWNmiss') || animOffsets.exists('singUPmiss') || animOffsets.exists('singRIGHTmiss')) hasMissAnimations = true;
+		
+		if(animOffsets.exists('singLEFTmiss') || animOffsets.exists('singDOWNmiss') || animOffsets.exists('singUPmiss') || animOffsets.exists('singRIGHTmiss')) {
+			hasMissAnimations = true;
+		}
+		
 		recalculateDanceIdle();
 		dance();
 
-		if (isPlayer)
-		{
-			flipX = !flipX;
-
-			/*// Doesn't flip for BF, since his are already in the right place???
-			if (!curCharacter.startsWith('bf'))
-			{
-				// var animArray
-				if(animation.getByName('singLEFT') != null && animation.getByName('singRIGHT') != null)
-				{
-					var oldRight = animation.getByName('singRIGHT').frames;
-					animation.getByName('singRIGHT').frames = animation.getByName('singLEFT').frames;
-					animation.getByName('singLEFT').frames = oldRight;
-				}
-
-				// IF THEY HAVE MISS ANIMATIONS??
-				if (animation.getByName('singLEFTmiss') != null && animation.getByName('singRIGHTmiss') != null)
-				{
-					var oldMiss = animation.getByName('singRIGHTmiss').frames;
-					animation.getByName('singRIGHTmiss').frames = animation.getByName('singLEFTmiss').frames;
-					animation.getByName('singLEFTmiss').frames = oldMiss;
-				}
-			}*/
-		}
+		if (isPlayer) flipX = !flipX;
 
 		switch(curCharacter)
 		{
@@ -288,12 +257,21 @@ class Character extends FlxSprite
 	{
 		if(!debugMode && animation.curAnim != null)
 		{
+			if(animTimer > 0) 
+			{
+				animTimer -= elapsed;
+				if(animTimer<=0){
+					animTimer=0;
+					dance();
+				}
+			}
+			
 			if(heyTimer > 0)
 			{
-				heyTimer -= elapsed * PlayState.instance.playbackRate;
+				heyTimer -= elapsed;
 				if(heyTimer <= 0)
 				{
-					if(specialAnim && animation.curAnim.name == 'hey' || animation.curAnim.name == 'cheer')
+					if(specialAnim && (animation.curAnim.name == 'hey' || animation.curAnim.name == 'cheer'))
 					{
 						specialAnim = false;
 						dance();
@@ -305,21 +283,6 @@ class Character extends FlxSprite
 				specialAnim = false;
 				dance();
 			}
-			
-			switch(curCharacter)
-			{
-				case 'pico-speaker':
-					if(animationNotes.length > 0 && Conductor.songPosition > animationNotes[0][0])
-					{
-						var noteData:Int = 1;
-						if(animationNotes[0][1] > 2) noteData = 3;
-
-						noteData += FlxG.random.int(0, 1);
-						playAnim('shoot' + noteData, true);
-						animationNotes.shift();
-					}
-					if(animation.curAnim.finished) playAnim(animation.curAnim.name, false, false, animation.curAnim.frames.length - 3);
-			}
 
 			if (!isPlayer)
 			{
@@ -328,7 +291,7 @@ class Character extends FlxSprite
 					holdTimer += elapsed;
 				}
 
-				if (holdTimer >= Conductor.stepCrochet * (0.0011 / (FlxG.sound.music != null ? FlxG.sound.music.pitch : 1)) * singDuration)
+				if (holdTimer >= Conductor.stepCrochet * 0.0011 * singDuration)
 				{
 					dance();
 					holdTimer = 0;
@@ -346,14 +309,12 @@ class Character extends FlxSprite
 		super.update(elapsed);
 	}
 
-	public var danced:Bool = false;
-
 	/**
 	 * FOR GF DANCING SHIT
 	 */
 	public function dance()
 	{
-		if (!debugMode && !skipDance && !specialAnim)
+		if (!debugMode && !skipDance && animTimer <= 0 && !specialAnim)
 		{
 			if(danceIdle)
 			{
@@ -400,14 +361,14 @@ class Character extends FlxSprite
 			}
 		}
 	}
-
 	public function playGhostAnim(GhostIdx = 0, AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0){
+		if (GhostIdx < 0 || GhostIdx >= animGhosts.length) return;
 		var ghost = animGhosts[GhostIdx];
-		ghost.scale.copyFrom(scale);
+		ghost.scale.set(scale.x, scale.y);
 		ghost.updateHitbox();
 		ghost.frames = frames;
 		ghost.animation.copyFrom(animation);
-		ghost.antialiasing = !noAntialiasing;
+		ghost.antialiasing = antialiasing;
 		ghost.x = x;
 		ghost.y = y;
 		ghost.flipX = flipX;
@@ -416,24 +377,26 @@ class Character extends FlxSprite
 		ghost.visible = true;
 		ghost.color = FlxColor.fromRGB(healthColorArray[0], healthColorArray[1], healthColorArray[2]);
 		ghost.animation.play(AnimName, Force, Reversed, Frame);
-		if (ghostTweens[GhostIdx] != null)
+		if (GhostIdx < ghostTweens.length && ghostTweens[GhostIdx] != null) {
 			ghostTweens[GhostIdx].cancel();
+		}
 
-		ghostTweens[GhostIdx] = FlxTween.tween(ghost, {alpha: 0}, 0.75, {
-			ease: FlxEase.linear,
-			onComplete: function(twn:FlxTween)
-			{
-				ghost.visible = false;
-				ghostTweens[GhostIdx] = null;
-			}
-		});
+		if (GhostIdx < ghostTweens.length) {
+			ghostTweens[GhostIdx] = FlxTween.tween(ghost, {alpha: 0}, 0.75, {
+				ease: FlxEase.linear,
+				onComplete: function(twn:FlxTween)
+				{
+					ghost.visible = false;
+					ghostTweens[GhostIdx] = null;
+				}
+			});
+		}
 
 		var daOffset = animOffsets.get(AnimName);
 		if (animOffsets.exists(AnimName))
 			ghost.offset.set(daOffset[0], daOffset[1]);
 		else
 			ghost.offset.set(0, 0);
-
 	}
 
 	function sortAnims(Obj1:Array<Dynamic>, Obj2:Array<Dynamic>):Int
@@ -441,7 +404,6 @@ class Character extends FlxSprite
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1[0], Obj2[0]);
 	}
 
-	public var danceEveryNumBeats:Int = 2;
 	private var settingCharacterUp:Bool = true;
 	public function recalculateDanceIdle() {
 		var lastDanceIdle:Bool = danceIdle;

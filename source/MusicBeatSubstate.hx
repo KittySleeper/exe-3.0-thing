@@ -35,6 +35,7 @@ class MusicBeatSubstate extends FlxSubState
 		if (oldStep != curStep && curStep > 0)
 			stepHit();
 
+		 if (PlayState.isFixedAspectRatio) FlxG.fullscreen = false;
 
 		super.update(elapsed);
 	}

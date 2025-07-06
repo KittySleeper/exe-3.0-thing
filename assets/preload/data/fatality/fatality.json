@@ -9215,7 +9215,7 @@
 		"song": "Fatality",
 		"validScore": true,
 		"needsVoices": true,
-		"stage": "fatal-error",
+		"stage": "fatal-launch-base",
 		"speed": 2.7,
 		"bpm": 240
 	}

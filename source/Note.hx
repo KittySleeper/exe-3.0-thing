@@ -21,6 +21,8 @@ class Note extends FlxSprite
 {
 	public var extraData:Map<String,Dynamic> = [];
 
+	public var row:Int = 0;
+
 	public var strumTime:Float = 0;
 	public var mustPress:Bool = false;
 	public var noteData:Int = 0;
@@ -30,6 +32,7 @@ class Note extends FlxSprite
 	public var ignoreNote:Bool = false;
 	public var hitByOpponent:Bool = false;
 	public var noteWasHit:Bool = false;
+	public var isPixelNote:Bool = false;
 	public var prevNote:Note;
 	public var nextNote:Note;
 
@@ -48,7 +51,7 @@ class Note extends FlxSprite
 	public var eventVal1:String = '';
 	public var eventVal2:String = '';
 
-	public var colorSwap:ColorSwap;
+	public static var colorSwap:ColorSwap;
 	public var inEditor:Bool = false;
 
 	public var animSuffix:String = '';
@@ -134,7 +137,7 @@ class Note extends FlxSprite
 			switch(value) {
 				case 'Hurt Note':
 					ignoreNote = mustPress;
-					reloadNote('HURT');
+					reloadNote('noteSkins/HURT');
 					noteSplashTexture = 'HURTnoteSplashes';
 					if(isSustainNote) {
 						missHealth = 0.1;
@@ -150,16 +153,16 @@ class Note extends FlxSprite
 				case 'No Animation':
 					noAnimation = true;
 				case 'Static Note':
-					reloadNote('STATIC');
+					reloadNote('noteSkins/STATIC');
 				case 'Hex Note':
-					reloadNote("HEX");
+					reloadNote("noteSkins/HEX");
 					hitbox *= 0.55;
 					ignoreNote = true;
 					hitCausesMiss = true;
 					noteSplashDisabled = true;
 				case 'Phantom Note':
 					hitbox *= 0.5;
-					reloadNote('PHANTOM');
+					reloadNote('noteSkins/PHANTOM');
 					ignoreNote = true;
 					hitCausesMiss = true;
 					noteSplashDisabled = true; // I FUCKING HATE THIS PLEASE TURN IT OFF AAAAAAAAAAA
@@ -227,28 +230,28 @@ class Note extends FlxSprite
 
 			offsetX -= width / 2;
 
-			if (PlayState.isPixelStage)
+			if (PlayState.isPixelStage || this.isPixelNote)
 				offsetX += 30;
 
 			if (prevNote.isSustainNote)
 			{
 				prevNote.animation.play(colArray[prevNote.noteData % 4] + 'hold');
 
-				prevNote.scale.y *= Conductor.stepCrochet / 190;
+				prevNote.scale.y *= Conductor.stepCrochet / 191;
 				if(PlayState.instance != null)
 				{
 					prevNote.scale.y *= PlayState.instance.songSpeed;
 				}
 
-				if(PlayState.isPixelStage) {
-					prevNote.scale.y *= 2.44;
+				if(PlayState.isPixelStage || this.isPixelNote) {
+					prevNote.scale.y *= 2.39;
 					prevNote.scale.y *= (6 / height); //Auto adjust note size
 				}
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}
 
-			if(PlayState.isPixelStage) {
+			if(PlayState.isPixelStage || this.isPixelNote) {
 				scale.y *= PlayState.daPixelZoom;
 				updateHitbox();
 			}
@@ -261,7 +264,7 @@ class Note extends FlxSprite
 	var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
 	var lastNoteScaleToo:Float = 1;
 	public var originalHeightForCalcs:Float = 6;
-	function reloadNote(?prefix:String = '', ?texture:String = '', ?suffix:String = '') {
+	public function reloadNote(?prefix:String = '', ?texture:String = '', ?suffix:String = '') {
 		if(prefix == null) prefix = '';
 		if(texture == null) texture = '';
 		if(suffix == null) suffix = '';
@@ -284,7 +287,7 @@ class Note extends FlxSprite
 
 		var lastScaleY:Float = scale.y;
 		var blahblah:String = arraySkin.join('/');
-		if(PlayState.isPixelStage) {
+		if(PlayState.isPixelStage || this.isPixelNote) {
 			if(isSustainNote) {
 				loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'));
 				width = width / 4;

@@ -54,6 +54,8 @@ import openfl.utils.ByteArray;
 import Character;
 import Character.CharacterFile;
 
+import stages.objects.FatalPopup;
+
 using StringTools;
 #if sys
 import sys.FileSystem;
@@ -101,6 +103,15 @@ class ChartingState extends MusicBeatState
 		['Screen Shake', "Value 1: Camera shake\nValue 2: HUD shake\n\nEvery value works as the following example: \"1, 0.05\".\nThe first number (1) is the duration.\nThe second number (0.05) is the intensity."],
 		['Change Character', "Value 1: Character to change (Dad, BF, GF)\nValue 2: New character's name"],
 		['Change Scroll Speed', "Value 1: Scroll Speed Multiplier (1 is default)\nValue 2: Time it takes to change fully in seconds."],
+		['Notes Spin', 'Smoothly rotates all strum line notes.\nValue1: rotation angle in degrees (default: 360),\nValue2: duration in seconds (default: 0.2)'],
+		['RedVG', "hi guys i just finished a math test, i got a 85"],
+		["Fatality Popup","Fatality Popup WOo.\nValue 1: Amount of popups\nValue 2: Type (1, 2 or 3)\n\nType 2: Ignores the hard cap of " + FatalPopup.POPUP_LIMIT + " popups\nand are also a bit bigger\nType 3: The same as 2 but alot bigger"],
+		["Clear Popups","Removes all fatality popups"],
+		['Character Fly', "Makes a character float in the air with selected movement.\n\nValue 1: Flight type (hover/fly/sHover).\nValue 2: Character (Dad/BF/GF)"],
+		["Chroma Video","Video that chromakeys out green\nValue 1: MP4 name\nThese won't show with enabled low quality\ndue to it brings problems on low-end devices!"],
+		['sonicspook', "BOO lmaooo fuckin dumbass bozo \n get scared nerd, baby bitch"],
+		['static', "ok so an update on my test i think that uhhhhhhh i should redo it because\nmy final grade rn is like a 75-80 so id want it to raise it higher if it doesnt already"],
+		['TooSlowFlashinShit', "Value 1: "],
 		["Lyrics", "Lyrics!!!\nValue 1: Text and optionally, colour\n(To specify colour, seperate it by a --)\nValue 2: Duration, in seconds.\nDuration defaults to text length multiplied by 0.5"],
 		['Set Property', "Value 1: Variable name\nValue 2: New value"]
 	];
@@ -255,9 +266,9 @@ class ChartingState extends MusicBeatState
 				bpm: 146.0,
 				needsVoices: true,
 				arrowSkin: '',
-				splashSkin: 'noteSplashes',//idk it would crash if i didn't
+				splashSkin: 'BloodSplash',//idk it would crash if i didn't
 				player1: 'bf',
-				player2: 'scrimbo',
+				player2: 'sonicexe',
 				gfVersion: 'gf',
 				speed: 1,
 				stage: 'stage',
@@ -680,9 +691,9 @@ class ChartingState extends MusicBeatState
 		    var skinName = noteSkinInputText.text;
 			var notesSkinPath = "assets/shared/images/" + skinName + ".png";
 			#if sys
-			trace("Checking system file for notes skin: " + notesSkinPath + " -> " + sys.FileSystem.exists(notesSkinPath));
+			trace("Checking system file for notes skin: " + notesSkinPath + " -> " + FileSystem.exists(notesSkinPath));
 			#end
-            if (OpenFlAssets.exists(notesSkinPath)) {
+            if (FileSystem.exists(notesSkinPath)) {
                 _song.arrowSkin = skinName;
                 updateGrid();
 			} else if (skinName == '') {
@@ -733,7 +744,7 @@ class ChartingState extends MusicBeatState
 
 		UI_box.addGroup(tab_group_song);
 
-		FlxG.camera.follow(camPos);
+		initPsychCamera().follow(camPos, LOCKON, 999);
 	}
 
 	var stepperBeats:FlxUINumericStepper;
@@ -2704,17 +2715,6 @@ class ChartingState extends MusicBeatState
 		updateGrid();
 		updateSectionUI();
 		updateWaveform();
-	}
-
-	function convertTimingsForBPMChange(oldBPM:Float, newBPM:Float, notes:Array<Dynamic>):Array<Dynamic> {
-		var ratio:Float = oldBPM / newBPM;
-		for (note in notes) {
-			note[0] *= ratio;
-			if (note[2] != null) { 
-				note[2] *= ratio;
-			}
-		}
-		return notes;
 	}	
 
 	function changeSection(sec:Int = 0, ?updateMusic:Bool = true):Void
@@ -2872,9 +2872,7 @@ class ChartingState extends MusicBeatState
 		prevRenderedSustains.clear();
 	
 		if (_song.notes[curSec].changeBPM && _song.notes[curSec].bpm > 0) {
-			var oldBPM:Float = Conductor.bpm;
 			Conductor.changeBPM(_song.notes[curSec].bpm);
-			_song.notes[curSec].sectionNotes = convertTimingsForBPMChange(oldBPM, _song.notes[curSec].bpm, _song.notes[curSec].sectionNotes);
 		} else {
 			var daBPM:Float = _song.bpm;
 			for (i in 0...curSec) {

@@ -1,3 +1,4 @@
+
 package;
 
 import flixel.FlxG;
@@ -30,7 +31,7 @@ class Main extends Sprite
 	public static final game = {
 		width: 1280, // WINDOW width
 		height: 720, // WINDOW height
-		initialState: WarningState, // initial game state
+		initialState: Intro, // initial game state
         zoom: -1, // If -1, zoom is automatically calculated to fit the window dimensions
 		framerate: 60, // default framerate
 		skipSplash: true, // if the default flixel splash screen should be skipped

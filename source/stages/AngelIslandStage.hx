@@ -58,15 +58,15 @@ class AngelIslandStage extends BaseStage
 		deadknux.isGore = true;
 		add(deadknux);
 
-		var deadtailz:BGSprite = new BGSprite('PolishedP1/DeadTailz', -700, -200, 1, 1);
-		deadtailz.setGraphicSize(Std.int(deadtailz.width * 1.4));
-		deadtailz.isGore = true;
-		add(deadtailz);
-
 		var deadtailz1:BGSprite = new BGSprite('PolishedP1/DeadTailz1', -600, -200, 1, 1);
 		deadtailz1.setGraphicSize(Std.int(deadtailz1.width * 1.4));
 		deadtailz1.isGore = true;
 		add(deadtailz1);
+
+		var deadtailz:BGSprite = new BGSprite('PolishedP1/DeadTailz', -700, -200, 1, 1);
+		deadtailz.setGraphicSize(Std.int(deadtailz.width * 1.4));
+		deadtailz.isGore = true;
+		add(deadtailz);
 
 		var deadtailz2:BGSprite = new BGSprite('PolishedP1/DeadTailz2', -600, -400, 1, 1);
 		deadtailz2.setGraphicSize(Std.int(deadtailz2.width * 1.4));
@@ -97,15 +97,15 @@ class AngelIslandStage extends BaseStage
 			switch (curStep)
 			{
 				case 384:
-					game.camGame.alpha = 0;
+					camGame.alpha = 0;
 				case 400:
-					game.camGame.alpha = 1;
-					game.defaultCamZoom = 0.9;
+					camGame.alpha = 1;
+					defaultCamZoom = 0.9;
 				case 415, 687, 751, 1055:
 					game.camZooming = false;
 					game.supersuperZoomShit = true;
 				case 416:
-					game.defaultCamZoom = 0.65;
+					defaultCamZoom = 0.65;
 				case 544, 672, 800, 1056, 1312, 1440, 1504:
 					game.camOther.flash(FlxColor.RED, 0.5);
 				case 675, 736, 1313:
@@ -114,7 +114,7 @@ class AngelIslandStage extends BaseStage
 				case 928:
 					FlxTween.tween(FlxG.camera, {zoom: 1.0}, 0.7);
 					game.cinematicBars(true);
-					game.defaultCamZoom = 1.0;
+					defaultCamZoom = 1.0;
 					game.supersuperZoomShit = false;
 					FlxTween.tween(game.camHUD, {alpha: 0}, 0.7);
 				case 1039:
@@ -123,7 +123,7 @@ class AngelIslandStage extends BaseStage
 					game.defaultCamZoom = 0.6;
 					FlxTween.tween(game.camHUD, {alpha: 1}, 1.4);
 				case 1472, 1478, 1484, 1490, 1496:
-					game.defaultCamZoom += 0.15;
+					defaultCamZoom += 0.15;
 				case 1505:
 					game.camZooming = false;
 					game.supersuperZoomShit = true;
