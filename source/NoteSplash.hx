@@ -13,7 +13,7 @@ class NoteSplash extends FlxSprite
 	public function new(x:Float = 0, y:Float = 0, ?note:Int = 0) {
 		super(x, y);
 
-		var skin:String = 'noteSplashes';
+		var skin:String = 'BloodSplash';
 		if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) skin = PlayState.SONG.splashSkin;
 
 		loadAnims(skin);
@@ -30,30 +30,91 @@ class NoteSplash extends FlxSprite
 		alpha = 0.6;
 
 		if(texture == null) {
-			texture = 'noteSplashes';
+			texture = 'BloodSplash';
 			if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) texture = PlayState.SONG.splashSkin;
 		}
 
 		if(textureLoaded != texture) {
 			loadAnims(texture);
 		}
+
 		colorSwap.hue = hueColor;
 		colorSwap.saturation = satColor;
 		colorSwap.brightness = brtColor;
 		offset.set(10, 10);
-
 		var animNum:Int = FlxG.random.int(1, 2);
 		animation.play('note' + note + '-' + animNum, true);
-		if(animation.curAnim != null)animation.curAnim.frameRate = 24 + FlxG.random.int(-2, 2);
+
+		if(animation.curAnim != null) animation.curAnim.frameRate = 24 + FlxG.random.int(-2, 2);
+
+		switch(texture) {
+			case 'BloodSplash':
+				alpha = 1;
+				colorSwap.hue = 0;
+				colorSwap.saturation = 0;
+				colorSwap.brightness = 0;
+				offset.set(-40, -90);
+				animation.play('splash', true);
+
+				if(animation.curAnim != null) animation.curAnim.frameRate = 24;
+			case 'hitmarker':
+				alpha = 1;
+				colorSwap.hue = 0;
+				colorSwap.saturation = 0;
+				colorSwap.brightness = 0;
+				animation.play('hit', true);
+				updateHitbox();
+				offset.set(-90, -90);
+
+				if(animation.curAnim != null) animation.curAnim.frameRate = 24;
+			case 'milkSplashes':
+				alpha = 0.89;
+				scale.set(0.6, 0.6);
+				updateHitbox();
+				offset.set(70, 90);
+				var animNum:Int = FlxG.random.int(1, 2);
+
+				animation.play('note' + note + '-' + animNum, true);
+			case 'endlessNoteSplashes':
+				alpha = 1;
+				offset.set(20, -10);
+			case 'endlessJPNoteSplashes':
+				alpha = 1;
+				offset.set(-10, -45);
+
+		}
 	}
 
 	function loadAnims(skin:String) {
 		frames = Paths.getSparrowAtlas(skin);
-		for (i in 1...3) {
-			animation.addByPrefix("note1-" + i, "note splash blue " + i, 24, false);
-			animation.addByPrefix("note2-" + i, "note splash green " + i, 24, false);
-			animation.addByPrefix("note0-" + i, "note splash purple " + i, 24, false);
-			animation.addByPrefix("note3-" + i, "note splash red " + i, 24, false);
+		switch(skin) {
+			case 'BloodSplash':
+					animation.addByPrefix("splash", "Squirt", 24, false);
+			case 'hitmarker':
+					animation.addByPrefix("hit", "hit", 24, false);
+			case 'milkSplashes':
+				for (i in 1...3) {
+					animation.addByPrefix("note1-" + i, "note splash blue " + i, 24, false);
+					animation.addByPrefix("note2-" + i, "note splash green " + i, 24, false);
+					animation.addByPrefix("note0-" + i, "note splash purple " + i, 24, false);
+					animation.addByPrefix("note3-" + i, "note splash red " + i, 24, false);
+				}
+			default:
+				/*if(PlayState.SONG.isRing)
+					for (i in 1...3) {
+						animation.addByPrefix("note1-" + i, "note splash blue " + i, 24, false);
+						animation.addByPrefix("note3-" + i, "note splash green " + i, 24, false);
+						animation.addByPrefix("note0-" + i, "note splash purple " + i, 24, false);
+						animation.addByPrefix("note4-" + i, "note splash red " + i, 24, false);
+						animation.addByPrefix("note2-" + i, "note splash red " + i, 24, false);
+					}
+				else*/
+					for (i in 1...3) {
+						animation.addByPrefix("note1-" + i, "note splash blue " + i, 24, false);
+						animation.addByPrefix("note2-" + i, "note splash green " + i, 24, false);
+						animation.addByPrefix("note0-" + i, "note splash purple " + i, 24, false);
+						animation.addByPrefix("note3-" + i, "note splash red " + i, 24, false);
+					}
 		}
 	}
 

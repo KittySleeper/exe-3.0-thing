@@ -28,9 +28,9 @@ class StoryMenuState extends MusicBeatState
 	// defaults to True
 	public static var weekCompleted:Map<String, Bool> = new Map<String, Bool>();
 
-	var scoreText:FlxText;
+	public static var curDifficulty:String = '';
 
-	private static var curDifficulty:Int = 1;
+	var scoreText:FlxText;
 
 	var txtWeekTitle:FlxText;
 	var bgSprite:FlxSprite;
@@ -73,14 +73,17 @@ class StoryMenuState extends MusicBeatState
 	var staticscreen:FlxSprite;
 	var portrait:FlxSprite;
 
-
 	override function create()
 	{
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
 
-		WeekData.reloadWeekFiles(true);
 		persistentUpdate = persistentDraw = true;
+
+		if (FlxG.save.data.storyProgress == null) {
+			FlxG.save.data.storyProgress = 0;
+			FlxG.save.flush();
+		}
 
 		FlxG.sound.playMusic(Paths.music('storymodemenumusic'));
 
@@ -99,16 +102,19 @@ class StoryMenuState extends MusicBeatState
 		greyBOX.updateHitbox();
 		add(greyBOX);
 
-		bfIDLELAWL = new Boyfriend(-50, 0);
+		bfIDLELAWL = new Boyfriend(-100, 0);
 		bfIDLELAWL.scale.x = .4;
 		bfIDLELAWL.scale.y = .4;
 		bfIDLELAWL.screenCenter();
 		bfIDLELAWL.antialiasing = ClientPrefs.globalAntialiasing;
 		bfIDLELAWL.y += 50;
-		bfIDLELAWL.animation.play('idleLAWLAW', true);
+		bfIDLELAWL.animation.play('idle', true);
 		add(bfIDLELAWL);
 
-		portrait = new FlxSprite(445, 79).loadGraphic(Paths.image('sm stuff/arts/too-slow'));
+		real = FlxG.save.data.storyProgress;
+    	if (real >= songArray.length) real = songArray.length - 1;
+
+		portrait = new FlxSprite(445, 79).loadGraphic(Paths.image('sm stuff/arts/' + songArray[real]));
 		portrait.setGraphicSize(Std.int(portrait.width * 0.275));
 		portrait.antialiasing = ClientPrefs.globalAntialiasing;
 		portrait.updateHitbox();
@@ -186,34 +192,63 @@ class StoryMenuState extends MusicBeatState
 		sprDifficulty.offset.x = 70;
 		sprDifficulty.y = leftArrow.y + 10;
 
+		if(FlxG.save.data.storyDifficulty == null) {
+			FlxG.save.data.storyDifficulty = '';
+		}
+
+		helloMaDiff(FlxG.save.data.storyDifficulty);
+
 		super.create();
+	}
+
+	function helloMaDiff(diff:String)
+	{
+		curDifficulty = diff;
+		
+		switch(diff) {
+			case '-easy': 
+				curdiff = 1;
+				sprDifficulty.animation.play('easy');
+				sprDifficulty.offset.x = 20;
+			case '-hard': 
+				curdiff = 3;
+				sprDifficulty.animation.play('hard');
+				sprDifficulty.offset.x = 20;
+			default: 
+				curdiff = 2;
+				sprDifficulty.animation.play('normal');
+				sprDifficulty.offset.x = 70;
+		}
 	}
 
 	function changediff(diff:Int = 1)
 	{
+		if (curdiff + diff < 1) return;
+		if (curdiff + diff > 3) return;
+		if (FlxG.save.data.storyProgress > 0 && FlxG.save.data.storyProgress != 3) return;
+
 		curdiff += diff;
-
-		if (curdiff == 0)
-			curdiff = 4;
-
-		if (curdiff > 3)
-			curdiff = 1;
 
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 
-		switch (curdiff)
-		{
+		switch(curdiff) {
 			case 1:
+				curDifficulty = '-easy';
 				sprDifficulty.animation.play('easy');
 				sprDifficulty.offset.x = 20;
-			case 2:
+			case 2: 
+				curDifficulty = '';
 				sprDifficulty.animation.play('normal');
 				sprDifficulty.offset.x = 70;
-			case 3:
+			case 3: 
+				curDifficulty = '-hard';
 				sprDifficulty.animation.play('hard');
 				sprDifficulty.offset.x = 20;
-
 		}
+		
+		FlxG.save.data.storyDifficulty = curDifficulty;
+		FlxG.save.flush();
+
 		sprDifficulty.alpha = 0;
 		sprDifficulty.y = leftArrow.y - 15;
 		FlxTween.tween(sprDifficulty, {y: leftArrow.y + 10, alpha: 1}, 0.07);
@@ -221,18 +256,17 @@ class StoryMenuState extends MusicBeatState
 
 	function changeAct(diff:Int = 1)
 	{
-		if (FlxG.save.data.storyProgress != 0)
-		{
+		var newIndex:Int = real + diff;
+		
+		if (newIndex < 0) newIndex = 0;
+		if (newIndex > FlxG.save.data.storyProgress) newIndex = FlxG.save.data.storyProgress;
+		if (newIndex >= songArray.length) newIndex = songArray.length - 1;
+
+		if (newIndex != real) {
 			FlxG.sound.play(Paths.sound('scrollMenu'));
-
-			real += diff;
-			if (real < 0)
-				real = FlxG.save.data.storyProgress;
-			else if (real > FlxG.save.data.storyProgress)
-				real = 0;
-
+			real = newIndex;
 			portrait.loadGraphic(Paths.image('sm stuff/arts/' + songArray[real]));
-
+			
 			FlxTween.cancelTweensOf(staticscreen);
 			staticscreen.alpha = 1;
 			FlxTween.tween(staticscreen, {alpha: 0.3}, 1);
@@ -262,33 +296,54 @@ class StoryMenuState extends MusicBeatState
 	override public function update(elapsed:Float)
 	{
 		if (controls.UI_LEFT && oneclickpls)
-			leftArrow.animation.play('press');
+		{
+			if (selection && real > 0) 
+				leftArrow.animation.play('press');
+			else if (!selection && curdiff > 1)
+				leftArrow.animation.play('press');
+			else
+				leftArrow.animation.play('idle');
+		}
 		else
+		{
 			leftArrow.animation.play('idle');
+		}
 
 		if (controls.UI_LEFT_P && oneclickpls)
 		{
-			if (selection)
+			if (selection && real > 0)
 				changeAct(-1);
-			else
+			else if (!selection && curdiff > 1)
 				changediff(-1);
 		}
 
 		if (controls.UI_RIGHT && oneclickpls)
-			rightArrow.animation.play('press');
+		{
+			if (selection && real < FlxG.save.data.storyProgress && real < songArray.length - 1)
+				rightArrow.animation.play('press');
+			else if (!selection && curdiff < 3)
+				rightArrow.animation.play('press');
+			else
+				rightArrow.animation.play('idle');
+		}
 		else
+		{
 			rightArrow.animation.play('idle');
+		}
 
 		if (controls.UI_RIGHT_P && oneclickpls)
 		{
-			if (selection)
+			if (selection && real < FlxG.save.data.storyProgress && real < songArray.length - 1)
 				changeAct(1);
-			else
+			else if (!selection && curdiff < 3)
 				changediff(1);
 		}
 
-		if ((controls.UI_UP_P && oneclickpls) || (controls.UI_DOWN_P && oneclickpls))
-			changeSelec(); // i forgor how ifs work
+		if ((controls.UI_UP_P && oneclickpls && !selection) || 
+			(controls.UI_DOWN_P && oneclickpls && selection))
+		{
+			changeSelec();
+		}
 
 		if (controls.BACK && oneclickpls)
 		{
@@ -301,20 +356,26 @@ class StoryMenuState extends MusicBeatState
 			if (oneclickpls)
 			{
 				oneclickpls = false;
-				var curDifficulty = '';
 
 				FlxG.sound.play(Paths.sound('confirmMenu'));
 
-				curDifficulty = '-hard';
+				switch(sprDifficulty.animation.curAnim.name)
+				{
+					case 'easy':
+						curDifficulty = '-easy';
+					case 'hard':
+						curDifficulty = '-hard';
+				}
 
 				PlayState.SONG = Song.loadFromJson(songArray[real].toLowerCase() + curDifficulty, songArray[real].toLowerCase());
 				PlayState.isStoryMode = true;
 				PlayState.isEncoreMode = false;
 				PlayState.isSoundTest = false;
+				PlayState.storyPlaylist = songArray;
 				LoadingState.loadAndSwitchState(new PlayState());
 			}
 
-			if (FlxG.save.data.flashing)
+			if (ClientPrefs.flashing)
 			{
 				FlxFlicker.flicker(redBOX, 1, 0.06, false, false, function(flick:FlxFlicker) {});
 			}

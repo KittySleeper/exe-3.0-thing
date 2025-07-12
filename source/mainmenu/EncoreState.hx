@@ -132,7 +132,6 @@ class EncoreState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('confirmMenu'));
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
-			PlayStateChangeables.nocheese = false;
 			new FlxTimer().start(2, function(tmr:FlxTimer)
 			{
 				LoadingState.loadAndSwitchState(new PlayState());

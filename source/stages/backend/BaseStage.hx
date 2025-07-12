@@ -33,6 +33,8 @@ class BaseStage extends FlxBasic
 	public var canPause(get, set):Bool;
 	public var members(get, never):Dynamic;
 
+	private var controls(get, never):Controls;
+
 	public var boyfriend(get, never):Character;
 	public var dad(get, never):Character;
 	public var gf(get, never):Character;
@@ -42,6 +44,7 @@ class BaseStage extends FlxBasic
 	
 	public var camGame(get, never):FlxCamera;
 	public var camHUD(get, never):FlxCamera;
+	public var camIDK(get, never):FlxCamera;
 	public var camOther(get, never):FlxCamera;
 
 	public var defaultCamZoom(get, set):Float;
@@ -155,9 +158,12 @@ class BaseStage extends FlxBasic
 	inline private function get_boyfriendGroup():FlxSpriteGroup return game.boyfriendGroup;
 	inline private function get_dadGroup():FlxSpriteGroup return game.dadGroup;
 	inline private function get_gfGroup():FlxSpriteGroup return game.gfGroup;
+
+	inline function get_controls():Controls return PlayerSettings.player1.controls;
 	
 	inline private function get_camGame():FlxCamera return game.camGame;
 	inline private function get_camHUD():FlxCamera return game.camHUD;
+	inline private function get_camIDK():FlxCamera return game.camIDK;
 	inline private function get_camOther():FlxCamera return game.camOther;
 
 	inline private function get_defaultCamZoom():Float return game.defaultCamZoom;

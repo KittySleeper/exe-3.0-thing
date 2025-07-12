@@ -7,6 +7,7 @@ using StringTools;
 class AttachedSprite extends FlxSprite
 {
 	public var sprTracker:FlxSprite;
+	public var file:String = null;
 	public var xAdd:Float = 0;
 	public var yAdd:Float = 0;
 	public var angleAdd:Float = 0;
@@ -15,19 +16,31 @@ class AttachedSprite extends FlxSprite
 	public var copyAngle:Bool = true;
 	public var copyAlpha:Bool = true;
 	public var copyVisible:Bool = false;
-
 	public function new(?file:String = null, ?anim:String = null, ?library:String = null, ?loop:Bool = false)
 	{
 		super();
+		this.file = file;
 		if(anim != null) {
-			frames = Paths.getSparrowAtlas(file, library);
+			frames = Paths.getSparrowAtlas(this.file, library);
 			animation.addByPrefix('idle', anim, 24, loop);
 			animation.play('idle');
-		} else if(file != null) {
-			loadGraphic(Paths.image(file));
+		} else if(this.file != null) {
+			loadGraphic(Paths.image(this.file));
 		}
 		antialiasing = ClientPrefs.globalAntialiasing;
 		scrollFactor.set();
+	}
+
+	public function setFile(newFile:String, ?anim:String = null, ?library:String = null, ?loop:Bool = false):Void
+	{
+		this.file = newFile;
+		if(anim != null) {
+			frames = Paths.getSparrowAtlas(this.file, library);
+			animation.addByPrefix('idle', anim, 24, loop);
+			animation.play('idle');
+		} else if(this.file != null) {
+			loadGraphic(Paths.image(this.file));
+		}
 	}
 
 	override function update(elapsed:Float)
