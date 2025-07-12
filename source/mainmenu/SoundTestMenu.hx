@@ -46,7 +46,7 @@ class SoundTestMenu extends MusicBeatState
 		"19 63" => ["round-a-bout"],
 		"66 6" => ["sunshine", "soulless"],
 		"40 3" => ["prey", "fight-or-flight"],
-		"12 25" => ["missiletoe", "slaybells"],
+		"25 12" => ["missiletoe", "slaybells"],
 		"2 24" => ["mania"]
 	];
 	
