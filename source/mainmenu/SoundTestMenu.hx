@@ -45,7 +45,8 @@ class SoundTestMenu extends MusicBeatState
 		"8 17" => ["my-horizon"],
 		"19 63" => ["round-a-bout"],
 		"66 6" => ["sunshine", "soulless"],
-		"40 3" => ["prey", "fight-or-flight"]
+		"40 3" => ["prey", "fight-or-flight"],
+		"12 25" => ["missiletoe", "slaybells"]
 	];
 	
 	final cameoSecrets:Map<String, CameoData> = [

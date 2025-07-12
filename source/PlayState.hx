@@ -706,7 +706,18 @@ class PlayState extends MusicBeatState
 				}
 				dadbattleSmokes = new FlxSpriteGroup(); //troll'd
 
-			case 'angel-island': new stages.AngelIslandStage(); //too slow
+			case 'angel island': new stages.AngelIslandStage(); //too slow
+			case 'cant-run-xd': new stages.YCRStage(); //you can walk
+			case 'fuckles': new stages.ChorizonStage(); //omigog is this my chorizontal dih??!!
+			case 'cycles-hills': new stages.LordSexStage(); //BALLLLLZZZZZZ!!!!
+			case 'endless-forest': new stages.MajinForestStage(); // THE FUN NEVER ENDS!
+			case 'sunkStage': new stages.SunkyStage(); // MILK & CEREAL, CEREAL & MILK
+			case 'TDDD': new stages.SegaSaturnStage(); // tails doll but in piece
+			case 'starved': new stages.FoFStage(); // I LOVE THAT HEDGEHOG
+			case 'sanicStage': new stages.SanicStage(); //YOUR 2 SLOOOWWWWW!!!!!
+			case 'void': new stages.ALAPersonaleStage(); //NOTHING PERSONEL KID!
+			case 'fatal-launch-base': new stages.LaunchBaseStage(); //YOUR CODE IS MINE --Fatal Sex
+			case 'SHWorkshop': new stages.TailsWorkshop();
 
 			default:
 

@@ -1,0 +1,46 @@
+{
+	"song": {
+		"events": [
+			[
+				42666.6666666667,
+				[
+					[
+						"Change Character",
+						"dad",
+						"shfront"
+					]
+				]
+			],
+			[
+				78222.2222222223,
+				[
+					[
+						"Change Character",
+						"dad",
+						"SHTails"
+					]
+				]
+			],
+			[
+				135111.111111111,
+				[
+					[
+						"Change Character",
+						"dad",
+						"shfront"
+					]
+				]
+			],
+			[
+				163555.555555556,
+				[
+					[
+						"Change Character",
+						"dad",
+						"SHTails"
+					]
+				]
+			]
+		]
+	}
+}

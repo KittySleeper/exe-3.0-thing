@@ -1,0 +1,78 @@
+{
+	"animations": [
+		{
+			"offsets": [
+				231,
+				-16
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singLEFT",
+			"loop": false,
+			"name": "EXE_left"
+		},
+		{
+			"offsets": [
+				-21,
+				-267
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singDOWN",
+			"loop": false,
+			"name": "EXE_down"
+		},
+		{
+			"offsets": [
+				195,
+				194
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singUP",
+			"loop": false,
+			"name": "EXE_up"
+		},
+		{
+			"offsets": [
+				-72,
+				-120
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singRIGHT",
+			"loop": false,
+			"name": "EXE_right"
+		},
+		{
+			"offsets": [
+				0,
+				0
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "idle",
+			"loop": false,
+			"name": "EXE_idle"
+		}
+	],
+	"no_antialiasing": false,
+	"image": "characters/fakerEXE_SLAYBALLS",
+	"position": [
+		0,
+		0
+	],
+	"healthicon": "exe",
+	"flip_x": false,
+	"healthbar_colors": [
+		35,
+		36,
+		144
+	],
+	"camera_position": [
+		0,
+		150
+	],
+	"sing_duration": 6.1,
+	"scale": 1
+}

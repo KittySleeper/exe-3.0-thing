@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="Sh_Bf_Mania.png">
+	<!-- Created with Adobe Animate version 22.0.5.191 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Sh It Bf Right Miss0000" x="1155" y="1289" width="291" height="617" frameX="-20" frameY="-14" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh It Bf Right Miss0001" x="0" y="0" width="313" height="645"/>
+	<SubTexture name="Sh It Bf Right Miss0002" x="313" y="0" width="313" height="645"/>
+	<SubTexture name="Sh It Bf Right Miss0003" x="626" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Right Miss0004" x="937" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Right Miss0005" x="937" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Right Miss0006" x="626" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Right Miss0007" x="626" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Right Miss0008" x="937" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Right Miss0009" x="937" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Right Miss0010" x="626" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Right Miss0011" x="626" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Right Miss0012" x="937" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Right Miss0013" x="937" y="0" width="311" height="645" frameX="-2" frameY="0" frameWidth="313" frameHeight="645"/>
+	<SubTexture name="Sh It Bf Up0000" x="1248" y="0" width="328" height="659" frameX="-13" frameY="0" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0001" x="1248" y="0" width="328" height="659" frameX="-13" frameY="0" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0002" x="1576" y="0" width="332" height="657" frameX="-11" frameY="-1" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0003" x="1576" y="0" width="332" height="657" frameX="-11" frameY="-1" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0004" x="1908" y="0" width="326" height="632" frameX="0" frameY="-30" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0005" x="1908" y="0" width="326" height="632" frameX="0" frameY="-30" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0006" x="2234" y="0" width="327" height="615" frameX="-3" frameY="-47" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0007" x="2234" y="0" width="327" height="615" frameX="-3" frameY="-47" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0008" x="2234" y="0" width="327" height="615" frameX="-3" frameY="-47" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0009" x="2234" y="0" width="327" height="615" frameX="-3" frameY="-47" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0010" x="2234" y="0" width="327" height="615" frameX="-3" frameY="-47" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0011" x="2234" y="0" width="327" height="615" frameX="-3" frameY="-47" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0012" x="2234" y="0" width="327" height="615" frameX="-3" frameY="-47" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh It Bf Up0013" x="2234" y="0" width="327" height="615" frameX="-3" frameY="-47" frameWidth="343" frameHeight="662"/>
+	<SubTexture name="Sh it Bf Down0000" x="2561" y="0" width="419" height="611" frameX="0" frameY="-7" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0001" x="2561" y="0" width="419" height="611" frameX="0" frameY="-7" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0002" x="2980" y="0" width="393" height="582" frameX="-18" frameY="-31" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0003" x="2980" y="0" width="393" height="582" frameX="-18" frameY="-31" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0004" x="3373" y="0" width="368" height="607" frameX="-46" frameY="-4" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0005" x="3373" y="0" width="368" height="607" frameX="-46" frameY="-4" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0006" x="0" y="659" width="361" height="611" frameX="-58" frameY="0" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0007" x="0" y="659" width="361" height="611" frameX="-58" frameY="0" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0008" x="0" y="659" width="361" height="611" frameX="-58" frameY="0" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0009" x="0" y="659" width="361" height="611" frameX="-58" frameY="0" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0010" x="0" y="659" width="361" height="611" frameX="-58" frameY="0" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0011" x="0" y="659" width="361" height="611" frameX="-58" frameY="0" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0012" x="0" y="659" width="361" height="611" frameX="-58" frameY="0" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down0013" x="0" y="659" width="361" height="611" frameX="-58" frameY="0" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down Miss0000" x="2561" y="0" width="419" height="611" frameX="0" frameY="-20" frameWidth="419" frameHeight="618"/>
+	<SubTexture name="Sh it Bf Down Miss0001" x="361" y="659" width="357" height="624" frameX="-63" frameY="0" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0002" x="361" y="659" width="357" height="624" frameX="-63" frameY="0" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0003" x="718" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0004" x="718" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0005" x="1087" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0006" x="1087" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0007" x="718" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0008" x="718" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0009" x="1087" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0010" x="1087" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0011" x="718" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0012" x="718" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Down Miss0013" x="1087" y="659" width="369" height="619" frameX="-57" frameY="-5" frameWidth="426" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0000" x="1456" y="659" width="430" height="630" frameX="0" frameY="0" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0001" x="1456" y="659" width="430" height="630" frameX="0" frameY="0" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0002" x="1886" y="659" width="423" height="615" frameX="-9" frameY="-15" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0003" x="1886" y="659" width="423" height="615" frameX="-9" frameY="-15" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0004" x="2309" y="659" width="387" height="612" frameX="-46" frameY="-16" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0005" x="2309" y="659" width="387" height="612" frameX="-46" frameY="-16" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0006" x="2696" y="659" width="383" height="613" frameX="-51" frameY="-18" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0007" x="2696" y="659" width="383" height="613" frameX="-51" frameY="-18" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0008" x="2696" y="659" width="383" height="613" frameX="-51" frameY="-18" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0009" x="2696" y="659" width="383" height="613" frameX="-51" frameY="-18" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0010" x="2696" y="659" width="383" height="613" frameX="-51" frameY="-18" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0011" x="2696" y="659" width="383" height="613" frameX="-51" frameY="-18" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0012" x="2696" y="659" width="383" height="613" frameX="-51" frameY="-18" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left0013" x="2696" y="659" width="383" height="613" frameX="-51" frameY="-18" frameWidth="434" frameHeight="631"/>
+	<SubTexture name="Sh it Bf Left Miss0000" x="3079" y="659" width="431" height="629" frameX="0" frameY="0" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0001" x="3510" y="659" width="383" height="622" frameX="-53" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0002" x="0" y="1289" width="383" height="622" frameX="-53" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0003" x="383" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0004" x="769" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0005" x="769" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0006" x="383" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0007" x="383" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0008" x="769" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0009" x="769" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0010" x="383" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0011" x="383" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0012" x="769" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Left Miss0013" x="769" y="1289" width="386" height="622" frameX="-50" frameY="-17" frameWidth="436" frameHeight="639"/>
+	<SubTexture name="Sh it Bf Right0000" x="1155" y="1289" width="291" height="617" frameX="-15" frameY="-12" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0001" x="1155" y="1289" width="291" height="617" frameX="-15" frameY="-12" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0002" x="1446" y="1289" width="297" height="613" frameX="-10" frameY="-16" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0003" x="1446" y="1289" width="297" height="613" frameX="-10" frameY="-16" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0004" x="1743" y="1289" width="307" height="624" frameX="0" frameY="-5" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0005" x="1743" y="1289" width="307" height="624" frameX="0" frameY="-5" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0006" x="2050" y="1289" width="306" height="628" frameX="-1" frameY="0" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0007" x="2050" y="1289" width="306" height="628" frameX="-1" frameY="0" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0008" x="2050" y="1289" width="306" height="628" frameX="-1" frameY="0" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0009" x="2050" y="1289" width="306" height="628" frameX="-1" frameY="0" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0010" x="2050" y="1289" width="306" height="628" frameX="-1" frameY="0" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0011" x="2050" y="1289" width="306" height="628" frameX="-1" frameY="0" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0012" x="2050" y="1289" width="306" height="628" frameX="-1" frameY="0" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Right0013" x="2050" y="1289" width="306" height="628" frameX="-1" frameY="0" frameWidth="307" frameHeight="629"/>
+	<SubTexture name="Sh it Bf Up Miss0000" x="2356" y="1289" width="329" height="659" frameX="-13" frameY="0" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0001" x="2685" y="1289" width="338" height="618" frameX="0" frameY="-43" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0002" x="2685" y="1289" width="338" height="618" frameX="0" frameY="-43" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0003" x="3023" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0004" x="3023" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0005" x="3350" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0006" x="3350" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0007" x="3023" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0008" x="3023" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0009" x="3350" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0010" x="3350" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0011" x="3023" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0012" x="3023" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it Bf Up Miss0013" x="3350" y="1289" width="327" height="622" frameX="-5" frameY="-39" frameWidth="342" frameHeight="661"/>
+	<SubTexture name="Sh it bf Idle0000" x="3677" y="1289" width="315" height="598" frameX="-16" frameY="-20" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0001" x="3677" y="1289" width="315" height="598" frameX="-16" frameY="-20" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0002" x="0" y="1948" width="306" height="597" frameX="-23" frameY="-21" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0003" x="0" y="1948" width="306" height="597" frameX="-23" frameY="-21" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0004" x="306" y="1948" width="319" height="597" frameX="-12" frameY="-22" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0005" x="306" y="1948" width="319" height="597" frameX="-12" frameY="-22" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0006" x="625" y="1948" width="329" height="619" frameX="-1" frameY="-1" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0007" x="625" y="1948" width="329" height="619" frameX="-1" frameY="-1" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0008" x="954" y="1948" width="329" height="619" frameX="0" frameY="0" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0009" x="954" y="1948" width="329" height="619" frameX="0" frameY="0" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0010" x="954" y="1948" width="329" height="619" frameX="0" frameY="0" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0011" x="954" y="1948" width="329" height="619" frameX="0" frameY="0" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0012" x="954" y="1948" width="329" height="619" frameX="0" frameY="0" frameWidth="331" frameHeight="620"/>
+	<SubTexture name="Sh it bf Idle0013" x="954" y="1948" width="329" height="619" frameX="0" frameY="0" frameWidth="331" frameHeight="620"/>
+</TextureAtlas>
