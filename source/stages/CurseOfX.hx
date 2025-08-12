@@ -12,7 +12,7 @@ class CurseOfX extends BaseStage
 	var curseFountain:FlxSprite;
 
 override public function create() {
-					game.defaultCamZoom = 0.60;
+					defaultCamZoom = 0.60;
 
 					curseSky = new FlxSprite(-300, -150);
 					curseSky.loadGraphic(Paths.image('curse/background', 'exe'));
