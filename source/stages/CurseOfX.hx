@@ -2,8 +2,15 @@ package stages;
 
 import flixel.FlxSprite;
 
-class curse extends BaseStage
+class CurseOfX extends BaseStage
 {
+	var curseStatic:FlxSprite;
+	var curseFloor:FlxSprite;
+	var curseSky:FlxSprite;
+	var curseTrees:FlxSprite;
+	var curseTreesTwo:FlxSprite;
+	var curseFountain:FlxSprite;
+
 override public function create() {
 					game.defaultCamZoom = 0.60;
 
