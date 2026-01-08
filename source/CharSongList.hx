@@ -6,7 +6,7 @@ class CharSongList
 
 	public static var data:Map<String, Array<String>> = [
 		"majin" => ["endless", "endless-og"],
-		"lord x" => ["cycles"],
+		"lord x" => ["cycles", "fate"],
 		"tails doll" => ["sunshine", "soulless"],
 		"requital" => ["forestall-desire", "deception"],
 		"fleetway" => ["chaos"],
@@ -15,6 +15,7 @@ class CharSongList
 		"sl4sh" => ["b4cksl4sh"],
 		"chaotix" => ["my-horizon", "our-horizon"],
 		"yourself..." => ["yourself"],
+		"christmas" => ["missiletoe", "slayballs"],
 		"curse" => ["malediction"],
 		"satanos" => ["perdition"],
 		"starved" => ["prey", "fight-or-flight"],
@@ -24,28 +25,26 @@ class CharSongList
 		"sunky" => ["milk"],
 		"sanic" => ["too-fest"],
 		"coldsteel" => ["personel"],
+		"sh tails" => ["mania"]
 	];
 
 	public static var characters:Array<String> = [
-		"majin",
-		"lord x",
-		"tails doll",
-		"requital",
-		"fleetway",
-		"fatalerror",
-		"xterion",
-		"sl4sh",
-		"yourself...",
-		"chaotix",
-		"curse",
-		"satanos",
-		"starved",
-		"sonic has passed",
-		"needlemouse",
-		"hog",
-		"sunky",
-		"sanic",
-		"coldsteel",
+	"majin", 
+    "lord x", 
+	"tails doll", 
+	"sunky", 
+	"fleetway", 
+	"fatalerror", 
+	"chaotix", 
+    "yourself...",
+	"christmas",
+    "curse", 
+    "starved",
+    "needlemouse", 
+    "hog", 
+    "sanic", 
+    "coldsteel", 
+    "sh tails"
 	];
 
 	public static var charactersUnlocked:Array<String> = [];

@@ -1,0 +1,122 @@
+{
+	"animations": [
+		{
+			"loop": false,
+			"offsets": [
+				0,
+				210
+			],
+			"anim": "idle",
+			"fps": 24,
+			"name": "Sh it bf I",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				-29,
+				219
+			],
+			"anim": "singRIGHT",
+			"fps": 24,
+			"name": "Sh it Bf R",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				110,
+				214
+			],
+			"anim": "singLEFT",
+			"fps": 24,
+			"name": "Sh it Bf Left0",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				69,
+				200
+			],
+			"anim": "singDOWN",
+			"fps": 24,
+			"name": "Sh it Bf Down0",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				-1,
+				254
+			],
+			"anim": "singUP",
+			"fps": 24,
+			"name": "Sh It Bf Up0",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				109,
+				211
+			],
+			"anim": "singLEFTmiss",
+			"fps": 24,
+			"name": "Sh it Bf Left Miss",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				70,
+				209
+			],
+			"anim": "singDOWNmiss",
+			"fps": 24,
+			"name": "Sh it Bf Down Miss",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				2,
+				255
+			],
+			"anim": "singUPmiss",
+			"fps": 24,
+			"name": "Sh it Bf Up Miss",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				-24,
+				223
+			],
+			"anim": "singRIGHTmiss",
+			"fps": 24,
+			"name": "Sh It Bf Right Miss",
+			"indices": []
+		}
+	],
+	"no_antialiasing": false,
+	"image": "characters/Sh_Bf_Mania",
+	"position": [
+		190,
+		350
+	],
+	"healthicon": "bf",
+	"flip_x": true,
+	"healthbar_colors": [
+		49,
+		176,
+		209
+	],
+	"camera_position": [
+		80,
+		-230
+	],
+	"sing_duration": 4,
+	"scale": 1
+}

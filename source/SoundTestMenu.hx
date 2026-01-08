@@ -49,13 +49,15 @@ class SoundTestMenu extends MusicBeatState
 
 	var peakSongs:Map<String, Array<String>> = [
 		"12 25" => ["endless"],
-		"7 7" => ["cycles"],
+		"7 7" => ["cycles", "fate"],
 		"8 21" => ["chaos"],
 		"4 20" => ["too-fest"],
 		"6 20" => ["substantial", "digitalized"],
 		"66 6" => ["sunshine", "soulless"],
 		"20 5" => ["b4cksl4sh"],
-		"11 20" => ["burning"]
+		"11 20" => ["burning"],
+		"25 12" => ["missiletoe", "slaybells"],
+		"2 24" => ["mania"]
 	];
 
 	override function create()
